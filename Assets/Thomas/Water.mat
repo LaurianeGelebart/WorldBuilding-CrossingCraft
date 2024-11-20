@@ -74,8 +74,8 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _FlowSpeed: 0.125
-    - _FlowSpeed1: 0.075
-    - _FlowSpeed2: 0.15
+    - _FlowSpeed1: 0.2
+    - _FlowSpeed2: 0.3
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -84,7 +84,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionRange: 0.02
-    - _ReflectionThreshold: 0.35
+    - _ReflectionThreshold: 0.45
     - _Size: 2.9
     - _Size1: 3
     - _Size2: 4
