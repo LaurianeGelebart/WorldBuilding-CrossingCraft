@@ -18,12 +18,13 @@ Supervised by LIORET Alain
   - [Branch Naming](#branch-naming)
   - [Commit Naming](#commit-naming)
   - [Contribution Steps](#contribution-steps)
-- [Naming in code](#naming-in-code)
-  - [Variables](#variables)
+- [Naming Convention](#naming-convention)
+<!--  - [Variables](#variables)
   - [Naming Constants](#naming-constants)
   - [Methods](#methods)
   - [Classes](#classes)
   - [Utility Classes](#utility-classes)
+-->
 
 ## Technologies
 
@@ -85,8 +86,26 @@ If possible, use the **Rebase** feature to reduce the number of commits and only
 
 💡 Note that all these actions can be performed on Git Fork or Git Kraken for better visualization.
 
-## Naming in Code 
+## Naming Convention 
 
+Source: [https://github.com/ktaranov/naming-convention/blob/master/C%23%20Coding%20Standards%20and%20Naming%20Conventions.md](https://github.com/ktaranov/naming-convention/blob/master/C%23%20Coding%20Standards%20and%20Naming%20Conventions.md)
+
+| Object Name               | Notation   | Length | Plural | Prefix | Suffix | Abbreviation | Char Mask          | Underscores |
+|:--------------------------|:-----------|-------:|:-------|:-------|:-------|:-------------|:-------------------|:------------|
+| Namespace name            | PascalCase |    128 | Yes    | Yes    | No     | No           | [A-z][0-9]         | No          |
+| Class name                | PascalCase |    128 | No     | No     | Yes    | No           | [A-z][0-9]         | No          |
+| Constructor name          | PascalCase |    128 | No     | No     | Yes    | No           | [A-z][0-9]         | No          |
+| Method name               | PascalCase |    128 | Yes    | No     | No     | No           | [A-z][0-9]         | No          |
+| Method arguments          | camelCase  |    128 | Yes    | No     | No     | Yes          | [A-z][0-9]         | No          |
+| Local variables           | camelCase  |     50 | Yes    | No     | No     | Yes          | [A-z][0-9]         | No          |
+| Constants name            | PascalCase |     50 | No     | No     | No     | No           | [A-z][0-9]         | No          |
+| Field name Public         | PascalCase |     50 | Yes    | No     | No     | Yes          | [A-z][0-9]         | No          |
+| Field name Private        | _camelCase |     50 | Yes    | No     | No     | Yes          | _[A-z][0-9]        | Yes         |
+| Properties name           | PascalCase |     50 | Yes    | No     | No     | Yes          | [A-z][0-9]         | No          |
+| Delegate name             | PascalCase |    128 | No     | No     | Yes    | Yes          | [A-z]              | No          |
+| Enum type name            | PascalCase |    128 | Yes    | No     | No     | No           | [A-z]              | No          |
+
+<!-- 
 ### Variables
 - Use **camelCase** style for naming variables.
   - Examples: `playerHealth`, `itemCount`.
@@ -106,3 +125,4 @@ If possible, use the **Rebase** feature to reduce the number of commits and only
 ### Utility Classes
 - Utility classes contain static methods or constants shared across the application.
   - Examples: `MathUtils`, `AudioManager`.
+-->
