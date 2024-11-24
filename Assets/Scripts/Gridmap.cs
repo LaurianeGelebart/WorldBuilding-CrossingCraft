@@ -7,7 +7,7 @@ public class Gridmap : MonoBehaviour
     // Inspector fields
     public Vector3 gridSize;
     public Vector3 offset;
-    public GridTile[] tileset;
+    public List<GridTile> tileset;
 
     // Private fields
     private readonly List<GridCell> cells = new();
@@ -79,7 +79,7 @@ public class Gridmap : MonoBehaviour
 
     public GridTile FindTileByName(string name)
     {
-        return Array.Find(tileset, t => t.Name == name);
+        return tileset.Find(t => t.Name == name);
     }
     public GridCell FindCellOfTile(GridTile tile, Vector3Int positionInTile, Vector3Int flip, GridOrientation rotationY)
     {
