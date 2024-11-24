@@ -2,21 +2,21 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gridmap : MonoBehaviour
+public class GridmapPrefab : MonoBehaviour
 {
     // Inspector fields
     public Vector3 gridSize;
     public Vector3 offset;
-    public List<GridTile> tileset;
+    public List<GridTilePF> tileset;
 
     // Private fields
-    private readonly List<GridCell> cellTileset = new();
-    private readonly Dictionary<Vector3Int, GridCell> map = new();
+    private readonly List<GridCellPF> cellTileset = new();
+    private readonly Dictionary<Vector3Int, GridCellPF> map = new();
     private readonly List<GameObject> gameObjectsTiles = new();
 
     // Accessors
-    public List<GridCell> CellTileset { get { return cellTileset; } }
-    public Dictionary<Vector3Int, GridCell> Map { get { return map; } }
+    public List<GridCellPF> CellTileset { get { return cellTileset; } }
+    public Dictionary<Vector3Int, GridCellPF> Map { get { return map; } }
     public List<GameObject> GameObjectsTiles { get { return gameObjectsTiles; } }
 
     void Start()
@@ -35,7 +35,7 @@ public class Gridmap : MonoBehaviour
                 {
                     for (int i = 0; i < tile.size.x * tile.size.y * tile.size.z; i++)
                     {
-                        cellTileset.Add(new GridCell
+                        cellTileset.Add(new GridCellPF
                         {
                             tile = tile,
                             positionInTile = new(
@@ -44,7 +44,7 @@ public class Gridmap : MonoBehaviour
                                 i / (tile.size.x * tile.size.y)
                             ),
                             flip = new(j & 1, j >> 1 & 1, j >> 2 & 1),
-                            rotationY = (GridOrientation)k,
+                            rotationY = (GridOrientationPF)k,
                         });
                     }
                 }
@@ -83,11 +83,11 @@ public class Gridmap : MonoBehaviour
         }
     }
 
-    public GridTile FindTileByName(string name)
+    public GridTilePF FindTileByName(string name)
     {
         return tileset.Find(t => t.Name == name);
     }
-    public GridCell FindCellOfTile(GridTile tile, Vector3Int positionInTile, Vector3Int flip, GridOrientation rotationY)
+    public GridCellPF FindCellOfTile(GridTilePF tile, Vector3Int positionInTile, Vector3Int flip, GridOrientationPF rotationY)
     {
         return cellTileset.Find(ut => ut.tile == tile && ut.positionInTile == positionInTile && ut.flip == flip && ut.rotationY == rotationY);
     }
@@ -109,7 +109,7 @@ public class Gridmap : MonoBehaviour
         );
     }
 
-    public Tuple<GridTile, Vector3Int> GetTileAndLocation(Vector3Int position)
+    public Tuple<GridTilePF, Vector3Int> GetTileAndLocation(Vector3Int position)
     {
         if (map.ContainsKey(position))
         {
@@ -117,10 +117,10 @@ public class Gridmap : MonoBehaviour
         }
         return null;
     }
-    public bool PlaceTile(GridTile tile, Vector3Int position, Vector3Int flip, GridOrientation rotationY, bool replaceExisting = false)
+    public bool PlaceTile(GridTilePF tile, Vector3Int position, Vector3Int flip, GridOrientationPF rotationY, bool replaceExisting = false)
     {
-        List<GridCell> units = cellTileset.FindAll(ut => ut.tile == tile && ut.flip == flip && ut.rotationY == rotationY);
-        foreach (GridCell unit in units)
+        List<GridCellPF> units = cellTileset.FindAll(ut => ut.tile == tile && ut.flip == flip && ut.rotationY == rotationY);
+        foreach (GridCellPF unit in units)
         {
             var swizzledPosition = position + unit.PositionInTileSwizzled;
             if (!replaceExisting && map.ContainsKey(swizzledPosition))
@@ -128,16 +128,16 @@ public class Gridmap : MonoBehaviour
                 return false;
             }
         }
-        foreach (GridCell unit in units)
+        foreach (GridCellPF unit in units)
         {
             var swizzledPosition = position + unit.PositionInTileSwizzled;
             map[swizzledPosition] = unit;
         }
         return true;
     }
-    public bool PlaceTile(string tileName, Vector3Int position, Vector3Int flip, GridOrientation rotationY, bool replaceExisting = false)
+    public bool PlaceTile(string tileName, Vector3Int position, Vector3Int flip, GridOrientationPF rotationY, bool replaceExisting = false)
     {
-        GridTile tile = FindTileByName(tileName);
+        GridTilePF tile = FindTileByName(tileName);
         return PlaceTile(tile, position, flip, rotationY, replaceExisting);
     }
     public void RemoveTile(Vector3Int position)
@@ -145,15 +145,15 @@ public class Gridmap : MonoBehaviour
         var located = GetTileAndLocation(position);
         if (located == null) return;
         var (tile, origin) = located;
-        List<GridCell> units = cellTileset.FindAll(ut => ut.tile == tile);
-        foreach (GridCell unit in units)
+        List<GridCellPF> units = cellTileset.FindAll(ut => ut.tile == tile);
+        foreach (GridCellPF unit in units)
         {
             var swizzledPosition = origin + unit.PositionInTileSwizzled;
             map.Remove(swizzledPosition);
         }
     }
 
-    public GridCell GetCell(Vector3Int position)
+    public GridCellPF GetCell(Vector3Int position)
     {
         if (map.ContainsKey(position))
         {
@@ -161,7 +161,7 @@ public class Gridmap : MonoBehaviour
         }
         return null;
     }
-    public void PlaceCell(GridCell tile, Vector3Int position, bool replaceExisting = false)
+    public void PlaceCell(GridCellPF tile, Vector3Int position, bool replaceExisting = false)
     {
         if (!replaceExisting && map.ContainsKey(position))
         {
@@ -180,7 +180,7 @@ public class Gridmap : MonoBehaviour
     }
 }
 
-public enum GridOrientation
+public enum GridOrientationPF
 {
     Up = 0,
     Right = 1,
@@ -188,34 +188,34 @@ public enum GridOrientation
     Left = 3,
 }
 [Serializable]
-public class GridTile
+public class GridTilePF
 {
     public GameObject prefab;
     public Vector3Int size;
 
     public string Name { get { return prefab.name; } }
 }
-public class GridCell
+public class GridCellPF
 {
-    public GridTile tile;
+    public GridTilePF tile;
     public Vector3Int positionInTile;
     public Vector3Int flip;
-    public GridOrientation rotationY;
+    public GridOrientationPF rotationY;
 
     public Vector3Int PositionInTileSwizzled
     {
         get { return SwizzleTile(positionInTile, tile.size, flip, rotationY); }
     }
-    public static Vector3Int SwizzleTile(Vector3Int position, Vector3Int size, Vector3Int flip, GridOrientation rotationY)
+    public static Vector3Int SwizzleTile(Vector3Int position, Vector3Int size, Vector3Int flip, GridOrientationPF rotationY)
     {
         var x = -(flip.x * 2 - 1) * position.x + (flip.x == 1 ? size.x - 1 : 0);
         var y = -(flip.y * 2 - 1) * position.y + (flip.y == 1 ? size.y - 1 : 0);
         var z = -(flip.z * 2 - 1) * position.z + (flip.z == 1 ? size.z - 1 : 0);
         return rotationY switch
         {
-            GridOrientation.Right => new Vector3Int(z, y, size.x - 1 - x),
-            GridOrientation.Down => new Vector3Int(size.x - 1 - x, y, size.z - 1 - z),
-            GridOrientation.Left => new Vector3Int(size.z - 1 - z, y, x),
+            GridOrientationPF.Right => new Vector3Int(z, y, size.x - 1 - x),
+            GridOrientationPF.Down => new Vector3Int(size.x - 1 - x, y, size.z - 1 - z),
+            GridOrientationPF.Left => new Vector3Int(size.z - 1 - z, y, x),
             _ => new Vector3Int(x, y, z),
         };
     }
