@@ -21,6 +21,12 @@ public class Gridmap : MonoBehaviour
 
     void Start()
     {
+        GenerateCells();
+    }
+
+    public void GenerateCells()
+    {
+        cells.Clear();
         foreach (var tile in tileset)
         {
             for (int k = 0; k < 4; k++)
