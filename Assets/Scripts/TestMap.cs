@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 public class TestMap : MonoBehaviour
@@ -20,7 +19,7 @@ public class TestMap : MonoBehaviour
             gridmap.PlaceCell(unitTile, new Vector3Int(x, 0, z));
         }
 
-        var bigTiles = gridmap.tileset.Where(tile => tile.size != Vector3Int.one).ToList();
+        var bigTiles = gridmap.tileset.FindAll(tile => tile.size != Vector3Int.one);
         for (int p = 0; p < bigTiles.Count; p++)
         {
             var tile = bigTiles[p];
