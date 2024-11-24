@@ -10,12 +10,12 @@ public class Gridmap : MonoBehaviour
     public List<GridTile> tileset;
 
     // Private fields
-    private readonly List<GridCell> cells = new();
+    private readonly List<GridCell> cellTileset = new();
     private readonly Dictionary<Vector3Int, GridCell> map = new();
     private readonly List<GameObject> gameObjectsTiles = new();
 
     // Accessors
-    public List<GridCell> Cells { get { return cells; } }
+    public List<GridCell> CellTileset { get { return cellTileset; } }
     public Dictionary<Vector3Int, GridCell> Map { get { return map; } }
     public List<GameObject> GameObjectsTiles { get { return gameObjectsTiles; } }
 
@@ -26,7 +26,7 @@ public class Gridmap : MonoBehaviour
 
     public void GenerateCells()
     {
-        cells.Clear();
+        cellTileset.Clear();
         foreach (var tile in tileset)
         {
             for (int k = 0; k < 4; k++)
@@ -35,7 +35,7 @@ public class Gridmap : MonoBehaviour
                 {
                     for (int i = 0; i < tile.size.x * tile.size.y * tile.size.z; i++)
                     {
-                        cells.Add(new GridCell
+                        cellTileset.Add(new GridCell
                         {
                             tile = tile,
                             positionInTile = new(
@@ -89,7 +89,7 @@ public class Gridmap : MonoBehaviour
     }
     public GridCell FindCellOfTile(GridTile tile, Vector3Int positionInTile, Vector3Int flip, GridOrientation rotationY)
     {
-        return cells.Find(ut => ut.tile == tile && ut.positionInTile == positionInTile && ut.flip == flip && ut.rotationY == rotationY);
+        return cellTileset.Find(ut => ut.tile == tile && ut.positionInTile == positionInTile && ut.flip == flip && ut.rotationY == rotationY);
     }
 
     public Vector3 GetWorldPosition(Vector3Int position)
@@ -119,7 +119,7 @@ public class Gridmap : MonoBehaviour
     }
     public bool PlaceTile(GridTile tile, Vector3Int position, Vector3Int flip, GridOrientation rotationY, bool replaceExisting = false)
     {
-        List<GridCell> units = cells.FindAll(ut => ut.tile == tile && ut.flip == flip && ut.rotationY == rotationY);
+        List<GridCell> units = cellTileset.FindAll(ut => ut.tile == tile && ut.flip == flip && ut.rotationY == rotationY);
         foreach (GridCell unit in units)
         {
             var swizzledPosition = position + unit.PositionInTileSwizzled;
@@ -145,7 +145,7 @@ public class Gridmap : MonoBehaviour
         var located = GetTileAndLocation(position);
         if (located == null) return;
         var (tile, origin) = located;
-        List<GridCell> units = cells.FindAll(ut => ut.tile == tile);
+        List<GridCell> units = cellTileset.FindAll(ut => ut.tile == tile);
         foreach (GridCell unit in units)
         {
             var swizzledPosition = origin + unit.PositionInTileSwizzled;
@@ -171,7 +171,7 @@ public class Gridmap : MonoBehaviour
     }
     public void PlaceCell(int idx, Vector3Int position, bool replaceExisting = false)
     {
-        PlaceCell(cells[idx], position, replaceExisting);
+        PlaceCell(cellTileset[idx], position, replaceExisting);
     }
 
     public void RemoveCell(Vector3Int position)
