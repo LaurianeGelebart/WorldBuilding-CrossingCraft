@@ -7,7 +7,7 @@ public class TestMap : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gridmap.ClearGameObjects();
+        gridmap.GenerateCells();
 
         var simpleUnits = gridmap.CellTileset.FindAll(unit => unit.tile.size == Vector3Int.one);
         for (int idx = 0; idx < simpleUnits.Count; idx++)
