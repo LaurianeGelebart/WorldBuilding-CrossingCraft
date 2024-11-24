@@ -9,7 +9,7 @@ public class TestMap : MonoBehaviour
     {
         gridmap.ClearGameObjects();
 
-        var simpleUnits = gridmap.Cells.FindAll(unit => unit.tile.size == Vector3Int.one);
+        var simpleUnits = gridmap.CellTileset.FindAll(unit => unit.tile.size == Vector3Int.one);
         for (int idx = 0; idx < simpleUnits.Count; idx++)
         {
             int x = idx % 32;
