@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TestMap : MonoBehaviour
 {
-    public Gridmap gridmap;
+    public GridmapPrefab gridmap;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +27,7 @@ public class TestMap : MonoBehaviour
             {
                 for (int f = 0; f < 8; f++)
                 {
-                    gridmap.PlaceTile(tile, new Vector3Int((r * 8 + f) * 3, 2, p), new Vector3Int(f & 1, f >> 1 & 1, f >> 2 & 1), (GridOrientation)r);
+                    gridmap.PlaceTile(tile, new Vector3Int((r * 8 + f) * 3, 2, p), new Vector3Int(f & 1, f >> 1 & 1, f >> 2 & 1), (GridOrientationPF)r);
                 }
             }
         }
