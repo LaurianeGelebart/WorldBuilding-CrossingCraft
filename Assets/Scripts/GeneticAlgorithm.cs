@@ -2,39 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GeneticAlgorithm<Creature>
+public class GeneticAlgorithm
+// public class GeneticAlgorithm<C> where C : ForestCreature
 {
     private int populationSize;         // Taille de la actualGeneration
     private float mutationRate;      // Taux de mutation
     private float selectionThreshold; // Taux de sélection
     private float fitnessImportanceBias = 0.5f; // Biais de sélection
+
+    private ForestCreatureGenerator creatureGenerator;
     
 
-    public GeneticAlgorithm(int populationSize, float mutationRate, float selectionThreshold)
+    public GeneticAlgorithm(int populationSize, float mutationRate, float selectionThreshold, ForestCreatureGenerator creatureGenerator)
     {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.selectionThreshold = selectionThreshold;
+        this.creatureGenerator = creatureGenerator;
     }
     
 
     // Exécute l'évolution de la actualGeneration sur un nombre de générations défini
-    public List<Creature> EvolvePopulation(int generations, List<Creature> actualGeneration)
+    public List<ForestCreature> EvolvePopulation(int generations, List<ForestCreature> actualGeneration)
     {
         int iteration = 0; 
         while (iteration < generations)
         {
             // Sélectionner les meilleures créatures
-            List<Creature> selectedPopulation = Selection(actualGeneration);
+            List<ForestCreature> selectedPopulation = Selection(actualGeneration);
 
             // Créer la nouvelle génération
-            List<Creature> newPopulation = new List<Creature>();
+            List<ForestCreature> newPopulation = new List<ForestCreature>();
             while (newPopulation.Count < populationSize)
             {
-                Creature parent1 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
-                Creature parent2 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
+                ForestCreature parent1 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
+                ForestCreature parent2 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
 
-                Creature child = Recombination(parent1, parent2); 
+                ForestCreature child = Recombination(parent1, parent2); 
                 Mutate(child); 
                 newPopulation.Add(child);
             }
@@ -48,9 +52,9 @@ public class GeneticAlgorithm<Creature>
     }
 
     // Sélectionne les créatures les plus aptes pour la reproduction
-    private List<Creature> Selection(List<Creature> actualGeneration)
+    private List<ForestCreature> Selection(List<ForestCreature> actualGeneration)
     {
-        List<Creature> selectedPopulation = new List<Creature>();
+        List<ForestCreature> selectedPopulation = new List<ForestCreature>();
 
         // Trier la actualGeneration par fitness décroissante
         actualGeneration.Sort((a, b) => b.fitness.CompareTo(a.fitness));
@@ -73,7 +77,7 @@ public class GeneticAlgorithm<Creature>
     }
 
     // Crée une nouvelle créature à partir de la recombinaison de deux parents
-    private Creature Recombination(Creature parent1, Creature parent2)
+    private ForestCreature Recombination(ForestCreature parent1, ForestCreature parent2)
     {
         List<int> genome = new List<int>(new int[parent1.genomeLength]);
         int crossoverPoint = Random.Range(0, parent1.genomeLength / 2);
@@ -83,11 +87,11 @@ public class GeneticAlgorithm<Creature>
             genome[i] = (i < crossoverPoint) ? parent1.genome[i] : parent2.genome[i];
         }
 
-        return new Creature(genome, creatureGenerator);
+        return new ForestCreature(genome, creatureGenerator);
     }
 
     // Applique une mutation sur le génome d'une créature selon le taux de mutation
-    private void Mutate(Creature creature)
+    private void Mutate(ForestCreature creature)
     {
         for (int i = 0; i < creature.genome.Count; i++)
         {

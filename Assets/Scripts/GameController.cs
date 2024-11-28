@@ -5,17 +5,17 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     public ForestCreatureGenerator forestCreatureGenerator; // Référence au générateur de créatures
-    public DesertCreatureGenerator<DesertCreature> desertCreatureGenerator; // Référence au générateur de créatures
+    // public DesertCreatureGenerator<DesertCreature> desertCreatureGenerator; // Référence au générateur de créatures
 
 
-    private Population<ForestCreature> forestCreatures;
-    private Population<DesertCreature> desertCreatures;
+    private Population forestCreatures;
+    // private Population<DesertCreature> desertCreatures;
 
 
     void Start()
     {
-        forestCreatures = new Population<ForestCreature>( forestCreatureGenerator);
-        desertCreatures = new Population<DesertCreature>(desertCreatureGenerator);
+        forestCreatures = new Population(forestCreatureGenerator);
+        // desertCreatures = new Population<DesertCreature>(desertCreatureGenerator);
     }
 
     void Update()

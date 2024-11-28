@@ -2,42 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Population<C> where C : Creature
+// public class Population<C> where C : ForestCreature
+public class Population
 {
     public int populationSize = 10;           // Taille de la population
     // public int generations = 10;              // Nombre de générations
     public float mutationRate = 0.01f;        // Taux de mutation
     public float selectionThreshold = 0.7f;   // Taux de sélection
   
-    public CreatureGenerator<C> creatureGenerator; // Référence au générateur de créatures
-    private List<C> members;
-    private GeneticAlgorithm<C> geneticAlgorithm;
+    public ForestCreatureGenerator creatureGenerator; // Référence au générateur de créatures
+    private List<ForestCreature> members;
+    private GeneticAlgorithm geneticAlgorithm;
 
-    public List<C> Members
+    public List<ForestCreature> Members
     {
         get { return members; }  
     }
 
-    public Population(CreatureGenerator<C> creatureGenerator)
+    public Population(ForestCreatureGenerator creatureGenerator)
     {
         this.creatureGenerator = creatureGenerator;
 
-        this.geneticAlgorithm = new GeneticAlgorithm<C>(populationSize, mutationRate, selectionThreshold);
+        this.geneticAlgorithm = new GeneticAlgorithm(populationSize, mutationRate, selectionThreshold, creatureGenerator);
         this.initializePopulation();
     }
 
     public void evolve() 
     {
-        this.geneticAlgorithm.EvolvePopulation(this);
+        this.geneticAlgorithm.EvolvePopulation(2, members);
     }
 
     public void initializePopulation()
     {
-        members = new List<Creature>();
+        members = new List<ForestCreature>();
 
         for (int i = 0; i < populationSize; i++)
         {
-            Creature newCreature = new Creature(creatureGenerator);
+            ForestCreature newCreature = new ForestCreature(populationSize, creatureGenerator);
             members.Add(newCreature);
         }
     }

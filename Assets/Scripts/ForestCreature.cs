@@ -2,12 +2,60 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ForestCreature : Creature
+
+public class ForestCreature
 {
+    public List<int> genome;           // Liste d'entier (0 ou 1) représentant le génome de la créature (suite de bits)
+    public float fitness;              // Fitness de la créature (évaluation de sa qualité)
+    public GameObject model;           // Modèle 3D associé à la créature
+    public ForestCreatureGenerator creatureGenerator;  // Référence du générateur de modèles
+    public int genomeLength = 10;
+
     private Color color;               // Couleur de la créature
     private int tentaclesWidth;        // Longueur des tentacules 
     private int numberOfTentacles;     // Nombre de tentacules
     private float scaleFactor;         // Facteur de la taille globale de la créature
+
+
+
+    /// <summary>
+    /// Constructeur pour créer une créature avec un génome aléatoire d'une longueur donnée
+    /// Décode le génome et génère un modèle 3D
+    /// </summary>
+    /// <param name="genomeLength">Longueur du génome (en bits)</param>
+    /// <param name="generator">Référence au générateur de modèles</param>
+    public ForestCreature(int genomeLength, ForestCreatureGenerator generator)
+    {
+        genome = new List<int>();
+        creatureGenerator = generator;
+
+        // Remplissage du génome avec des valeurs aléatoires (0 ou 1)
+        for (int i = 0; i < genomeLength; i++)         
+        {
+            genome.Add(Random.Range(0, 2)); 
+        }
+
+        DecodeGenome();
+        EvaluateFitness();
+        model = creatureGenerator.GenerateModel(this); 
+    }
+
+    /// <summary>
+    /// Constructeur pour créer une créature à partir d'un génome déjà existant
+    /// Décode le génome et génère un modèle 3D
+    /// </summary>
+    /// <param name="generatedGenome">Génome prédéfini</param>
+    /// <param name="generator">Référence au générateur de modèles</param>
+    public ForestCreature(List<int> generatedGenome, ForestCreatureGenerator generator)
+    {
+        genome = generatedGenome;                      
+        creatureGenerator = generator;
+
+        DecodeGenome();       
+        EvaluateFitness();       
+        model = creatureGenerator.GenerateModel(this); 
+    }
+
 
     public Color Color
     {
@@ -17,7 +65,6 @@ public class ForestCreature : Creature
     {
         get { return tentaclesWidth; } 
     }
-
     public int NumberOfTentacles
     {
         get { return numberOfTentacles; }  
@@ -28,19 +75,10 @@ public class ForestCreature : Creature
     }
 
 
-
-    public ForestCreature(ForestCreatureGenerator generator)
-        : base(generator) { }
-
-    public ForestCreature(List<int> generatedGenome, ForestCreatureGenerator generator)
-        : base(generatedGenome, generator) { }
-
-
-
     /// <summary>
     /// Décoder le génome pour obtenir les attributs physiques de la créature (couleur, tentacules, taille)
     /// </summary>
-    public override void DecodeGenome()
+    private void DecodeGenome()
     {
         color = DecodeColor(); 
         tentaclesWidth = DecodeTentaclesWidth();
@@ -51,7 +89,7 @@ public class ForestCreature : Creature
     /// <summary>
     /// Évaluer la fitness de la créature en fonction de ses attributs (sa couleur,  sa taille, et le nombre, la longuer et le type de courbe des tentacules)
     /// </summary>
-    public override void EvaluateFitness()
+    private void EvaluateFitness()
     {
         fitness = 0f;
         fitness += EvaluateColor();
@@ -59,20 +97,6 @@ public class ForestCreature : Creature
         fitness += EvaluateTentaclesWidth();
         fitness += EvaluateTentaclesNumber();
         fitness += EvaluateCourbe();
-    }
-
-    public override void Update()
-    {
-        // float oscillationSpeed = 1f;
-        // List<Creature> population = geneticAlgorithm.GetPopulation();
-        
-        // foreach (var creature in population)
-        // {
-        //     Vector3 currentPosition = creature.model.transform.position;
-        //     float newYPosition = Mathf.Sin(Time.time * oscillationSpeed) * 2f; // Amplitude de l'oscillation
-        //     currentPosition.y = newYPosition;
-        //     creature.model.transform.position = currentPosition;
-        // }
     }
 
     /// <summary>
@@ -232,4 +256,5 @@ public class ForestCreature : Creature
             default: return new Vector3(0, t, 0); // Ligne droite
         }
     }
+
 }
