@@ -5,7 +5,7 @@ using UnityEngine;
 // public class Population<C> where C : Creature
 public class Population
 {
-    public int populationSize = 10;           // Taille de la population
+    public int populationSize = 1;           // Taille de la population
     public float mutationRate = 0.01f;        // Taux de mutation
     public float selectionThreshold = 0.7f;   // Taux de sélection
   

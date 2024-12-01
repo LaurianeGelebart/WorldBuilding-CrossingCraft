@@ -8,6 +8,7 @@ public class Creature
     public List<int> genome;           // Liste d'entier (0 ou 1) représentant le génome de la créature (suite de bits)
     public float fitness;              // Fitness de la créature (évaluation de sa qualité)
     public GameObject model;           // Modèle 3D associé à la créature
+    public Collider creatureCollider;  // Collider de la créature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
     public int genomeLength = 15;
     public CreatureType creatureType;
@@ -43,6 +44,7 @@ public class Creature
     {
         genome = new List<int>();
         creatureGenerator = generator;
+        faim = 100f;
 
         // Remplissage du génome avec des valeurs aléatoires (0 ou 1)
         for (int i = 0; i < genomeLength; i++)
@@ -53,6 +55,29 @@ public class Creature
         DecodeGenome();
         EvaluateFitness();
         model = creatureGenerator.GenerateModel(this);
+
+        CreatureMovement movementScript = model.AddComponent<CreatureMovement>();
+        movementScript.Initialize(this);
+
+        // Ajouter un Collider au modèle
+        AddColliderToModel();
+    }
+
+    private void AddColliderToModel()
+    {
+        // Ajouter un Collider de type CapsuleCollider au modèle
+        CapsuleCollider collider = model.AddComponent<CapsuleCollider>();
+
+        // Ajuster la taille du collider en fonction du facteur d'échelle
+        float scaleFactor = ScaleFactor;
+        collider.radius = 0.5f * scaleFactor;
+        collider.height = 2f * scaleFactor;
+
+        // Rendre le collider comme un trigger pour les interactions
+        collider.isTrigger = true;
+
+        // Stocker la référence du Collider
+        creatureCollider = collider;
     }
 
     /// <summary>
