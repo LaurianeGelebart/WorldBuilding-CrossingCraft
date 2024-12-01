@@ -2,24 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// public class Population<C> where C : ForestCreature
+// public class Population<C> where C : Creature
 public class Population
 {
     public int populationSize = 10;           // Taille de la population
-    // public int generations = 10;              // Nombre de générations
     public float mutationRate = 0.01f;        // Taux de mutation
     public float selectionThreshold = 0.7f;   // Taux de sélection
   
-    public ForestCreatureGenerator creatureGenerator; // Référence au générateur de créatures
-    private List<ForestCreature> members;
+    public CreatureGenerator creatureGenerator; // Référence au générateur de créatures
+    private List<Creature> members;
     private GeneticAlgorithm geneticAlgorithm;
 
-    public List<ForestCreature> Members
+    public List<Creature> Members
     {
         get { return members; }  
     }
 
-    public Population(ForestCreatureGenerator creatureGenerator)
+    public Population(CreatureGenerator creatureGenerator)
     {
         this.creatureGenerator = creatureGenerator;
 
@@ -29,16 +28,16 @@ public class Population
 
     public void evolve() 
     {
-        this.geneticAlgorithm.EvolvePopulation(2, members);
+        this.geneticAlgorithm.EvolvePopulation(1, members);
     }
 
     public void initializePopulation()
     {
-        members = new List<ForestCreature>();
+        members = new List<Creature>();
 
         for (int i = 0; i < populationSize; i++)
         {
-            ForestCreature newCreature = new ForestCreature(populationSize, creatureGenerator);
+            Creature newCreature = new Creature(creatureGenerator);
             members.Add(newCreature);
         }
     }

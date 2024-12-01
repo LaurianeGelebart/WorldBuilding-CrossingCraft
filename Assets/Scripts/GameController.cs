@@ -4,23 +4,20 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public ForestCreatureGenerator forestCreatureGenerator; // Référence au générateur de créatures
-    // public DesertCreatureGenerator<DesertCreature> desertCreatureGenerator; // Référence au générateur de créatures
+    public CreatureGenerator creatureGenerator; // Référence au générateur de créatures
 
 
-    private Population forestCreatures;
-    // private Population<DesertCreature> desertCreatures;
+    private Population creatures;
 
 
     void Start()
     {
-        forestCreatures = new Population(forestCreatureGenerator);
-        // desertCreatures = new Population<DesertCreature>(desertCreatureGenerator);
+        creatures = new Population(creatureGenerator);
     }
 
     void Update()
     {
-        // foreach(var creature in forestCreatures.Population){
+        // foreach(var creature in creatures.Population){
         //     creature.Update();
         // }
         // foreach(var creature in desertCreatures.Population){
