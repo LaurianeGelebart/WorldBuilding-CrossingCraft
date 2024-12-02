@@ -10,7 +10,7 @@ public class Creature
     public GameObject model;           // Modèle 3D associé à la créature
     public Collider creatureCollider;  // Collider de la créature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
-    public int genomeLength = 15;
+    public int genomeLength = 19;
 
     public float pv;
     public float faim;
@@ -22,7 +22,7 @@ public class Creature
     private float _scaleFactor;         // Facteur de la taille globale de la créature
     private int _numberOfMoustaches;
     private int _typeOfMoustache;
-    private int _typeOfCornes;
+    private int _typeOfHorns;
 
     public CreatureType Type => _type;
     public Color Color => _color;
@@ -30,7 +30,7 @@ public class Creature
     public int NumberOfTentacles => _numberOfTentacles;
     public int NumberOfMoustaches => _numberOfMoustaches;
     public int TypeOfMoustache => _typeOfMoustache;
-    public int TypeOfCornes => _typeOfCornes;
+    public int TypeOfHorns => _typeOfHorns;
     public float ScaleFactor => _scaleFactor;
 
 
@@ -123,6 +123,8 @@ public class Creature
         fitness += EvaluateTentaclesWidth();
         fitness += EvaluateTentaclesNumber();
         fitness += EvaluateCourbe();
+        fitness += EvaluateMoustacheType();
+        fitness += EvaluateMoustacheNumber();
     }
     /// <summary>
     /// Évalue la couleur de la créature 
@@ -167,10 +169,10 @@ public class Creature
         int tentaclesWidthBits = Utils.BitToInt(genome[3], genome[4]);
         switch (tentaclesWidthBits)
         {
-            case (3): return 1.5f;
-            case (2): return 3f;
-            case (1): return 2.5f;
-            case (0): return 2f;
+            case (3): return (_type == CreatureType.Forest) ? 1.5f : 1.5f;
+            case (2): return (_type == CreatureType.Forest) ? 3f : 3f;
+            case (1): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
+            case (0): return (_type == CreatureType.Forest) ? 2f : 2f;
             default: return 0;
         }
     }
@@ -184,10 +186,10 @@ public class Creature
         int legsBits = Utils.BitToInt(genome[6], genome[7]);
         switch (legsBits)
         {
-            case (3): return 1.75f;
-            case (2): return 3f;
-            case (1): return 3.5f;
-            case (0): return 1.75f;
+            case (3): return (_type == CreatureType.Forest) ? 1.75f : 1.75f;
+            case (2): return (_type == CreatureType.Forest) ? 3f : 3f;
+            case (1): return (_type == CreatureType.Forest) ? 3.5f : 3.5f;
+            case (0): return (_type == CreatureType.Forest) ? 1.75f : 1.75f;
             default: return 0;
         }
     }
@@ -201,10 +203,44 @@ public class Creature
         int courbeBits = Utils.BitToInt(genome[9], genome[10]);
         switch (courbeBits)
         {
-            case (3): return 3f;
-            case (2): return 1.5f;
-            case (1): return 2.5f;
-            case (0): return 3.5f;
+            case (3): return (_type == CreatureType.Forest) ? 3f : 3f;
+            case (2): return (_type == CreatureType.Forest) ? 1.5f : 1.5f;
+            case (1): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
+            case (0): return (_type == CreatureType.Forest) ? 3.5f : 3.5f;
+            default: return 0;
+        }
+    }
+
+    /// <summary>
+    /// Évalue le nombre de moustaches  
+    /// </summary>
+    /// <returns>Score de fitness basé sur le nombre de moustaches</returns>
+    private float EvaluateMoustacheNumber()
+    {
+        int moustacheBits = Utils.BitToInt(genome[11], genome[12]);
+        switch (moustacheBits)
+        {
+            case (3): return (_type == CreatureType.Forest) ? 4f : 4f;
+            case (2): return (_type == CreatureType.Forest) ? 1.5f : 1.5f;
+            case (1): return (_type == CreatureType.Forest) ? 1.5f : 1.5f;
+            case (0): return (_type == CreatureType.Forest) ? 3.5f : 3.5f;
+            default: return 0;
+        }
+    }
+
+    /// <summary>
+    /// Évalue le style des moustaches  
+    /// </summary>
+    /// <returns>Score de fitness basé sur le type de moustache</returns>
+    private float EvaluateMoustacheType()
+    {
+        int moustacheBits = Utils.BitToInt(genome[13], genome[14]);
+        switch (moustacheBits)
+        {
+            case (3): return (_type == CreatureType.Forest) ? 2f : 2f;
+            case (2): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
+            case (1): return (_type == CreatureType.Forest) ? 3f : 3f;
+            case (0): return (_type == CreatureType.Forest) ? 3f : 3f;
             default: return 0;
         }
     }
@@ -315,13 +351,27 @@ public class Creature
         return Utils.BitToInt(genome[13], genome[14]);
     }
 
-    //  /// <summary>
-    // /// Décode le nombre de moustache à partir des bits du génome
-    // /// </summary>
-    // /// <returns>Nombre de tentacules</returns>
-    // private int DecodeCorneType()
-    // {
-    //     return Utils.BitToInt(genome[15], genome[16]);
-    // }
+    /// <summary>
+    /// Décode le nombre de PV de la créature à partir des bits du génome
+    /// </summary>
+    /// <returns>PV max de la créature</returns>
+    private float DecodePV()
+    {
+        float pvBits = Utils.BitToInt(genome[15], genome[16]);
+        return (pvBits+5f) * 0.3f;
+    }
+
+    /// <summary>
+    /// Décode le nombre de PV de la créature à partir des bits du génome
+    /// </summary>
+    /// <returns>PV max de la créature</returns>
+    private float DecodeHunger()
+    {
+        float hungerBits = Utils.BitToInt(genome[17], genome[18]);
+        // float mappedValue = Mathf.Lerp(minOutput, maxOutput, Mathf.InverseLerp(minInput, maxInput, value));
+        return (hungerBits+5f) * 0.3f;
+    }
+
+
 
 }

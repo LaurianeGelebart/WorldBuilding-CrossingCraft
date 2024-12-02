@@ -29,7 +29,7 @@ public class CreatureGenerator : MonoBehaviour
         CreateEyes(headPosition, creatureModel, creature);
         CreateMoustache(headPosition, creatureModel, creature);
         CreateTentacles(creatureModel, creature);
-        if (creature.Type == CreatureType.Desert) CreateCornes(headPosition, creatureModel, creature);
+        if (creature.Type == CreatureType.Desert) CreateHorns(headPosition, creatureModel, creature);
 
         return creatureModel;
     }
@@ -53,15 +53,22 @@ public class CreatureGenerator : MonoBehaviour
 
         // Positionement de chaque sphère
         Vector3 basePosition = _initialPosition;
-        Vector3 largePosition = basePosition + new Vector3(0, (baseSize / 2 + largeSize / 2) * 0.8f, 0);
-        Vector3 smallerPosition = largePosition + new Vector3(0.2f, (largeSize / 2 + smallerSize / 2) * 0.8f, 0);
-        Vector3 topPosition = smallerPosition + new Vector3(0.2f, (smallerSize / 2 + topSize / 2) * 0.8f, 0);
+        Vector3 largePosition = basePosition + new Vector3(0f, (baseSize / 2 + largeSize / 2) * 0.7f, 0);
+        Vector3 smallerPosition = largePosition + new Vector3(0f, (largeSize / 2 + smallerSize / 2) * 0.7f, 0);
+        Vector3 topPosition = smallerPosition + new Vector3(0f, (smallerSize / 2 + topSize / 2) * 0.8f, 0);
 
         // Création des sphères du corps
         CreateSphere(basePosition, baseSize, creatureColor, creatureModel);
         CreateSphere(largePosition, largeSize, creatureColor, creatureModel);
-        CreateSphere(smallerPosition, smallerSize, creatureColor, creatureModel);
-        CreateSphere(topPosition, topSize, creatureColor, creatureModel);
+        if (creature.Type == CreatureType.Forest)
+        {
+            CreateSphere(smallerPosition, smallerSize, creatureColor, creatureModel);
+            CreateSphere(topPosition, topSize, creatureColor, creatureModel);
+        }
+        else
+        {
+            // CreateCube(smallerPosition, baseSize, creatureColor, creatureModel);
+        }
 
         return largePosition;  // Retourner la position de la tête pour y placer les yeux
     }
@@ -77,6 +84,22 @@ public class CreatureGenerator : MonoBehaviour
     {
         GameObject bodySphere = Instantiate(spherePrefab, position, Quaternion.identity);
         bodySphere.transform.localScale = new Vector3(size, size, size);
+        bodySphere.GetComponent<Renderer>().material.color = color;
+        bodySphere.transform.SetParent(creatureModel.transform);
+    }
+
+    /// <summary>
+    /// Crée un cube avec la taille et la couleur spécifiées et l'ajoute au modèle de la créature
+    /// </summary>
+    /// <param name="position">La position où placer la sphère</param>
+    /// <param name="size">La taille de la sphère</param>
+    /// <param name="color">La couleur de la sphère</param>
+    /// <param name="creatureModel">Le modèle de la créature</param>
+    private void CreateCube(Vector3 position, float size, Color color, GameObject creatureModel)
+    {
+        float ySize = size / 4f * 3f;
+        GameObject bodySphere = Instantiate(cubePrefab, position, Quaternion.Euler(0, 45, 0));
+        bodySphere.transform.localScale = new Vector3(size, ySize, size);
         bodySphere.GetComponent<Renderer>().material.color = color;
         bodySphere.transform.SetParent(creatureModel.transform);
     }
@@ -117,44 +140,47 @@ public class CreatureGenerator : MonoBehaviour
     /// </summary>
     /// <param name="headPosition">La position de la sphère tête</param>
     /// <param name="creatureModel">Le modèle de la créature</param>
-    /// <param name="creature">La créature dont les yeux doivent être générés</param>
-private void CreateMoustache(Vector3 headPosition, GameObject creatureModel, Creature creature)
-{
-    float scaleFactor = creature.ScaleFactor;
-    float largeSize = 1.2f * scaleFactor;
-    int numberOfMoustaches = creature.NumberOfMoustaches;
-    float moustacheSize = 30f * scaleFactor;
-
-    GameObject moustachePrefab = SelectMoustachePrefab(creature);
-
-    if (numberOfMoustaches != 0)
+    /// <param name="creature">La créature dont on génère les moustaches</param>
+    private void CreateMoustache(Vector3 headPosition, GameObject creatureModel, Creature creature)
     {
-        for (int nbMoustache = 0; nbMoustache < numberOfMoustaches; nbMoustache++)
-        {
-            // Créer une moustache gauche
-            Vector3 leftMoustachePosition = headPosition + new Vector3(
-                -largeSize / 3,
-                largeSize / 4 - 0.35f * scaleFactor - 0.08f * scaleFactor * (nbMoustache + 1),
-                largeSize / 2 - 0.1f * scaleFactor);
-            GameObject leftMoustache = Instantiate(moustachePrefab, leftMoustachePosition, Quaternion.identity);
-            leftMoustache.transform.localScale = new Vector3(moustacheSize, moustacheSize, moustacheSize);
-            leftMoustache.transform.SetParent(creatureModel.transform);
+        float scaleFactor = creature.ScaleFactor;
+        float largeSize = 1.2f * scaleFactor;
+        int numberOfMoustaches = creature.NumberOfMoustaches;
+        float moustacheSize = 30f * scaleFactor;
 
-            // Créer une moustache droite
-            Vector3 rightMoustachePosition = headPosition + new Vector3(
-                largeSize / 3,
-                largeSize / 4 - 0.35f * scaleFactor - 0.08f * scaleFactor * (nbMoustache + 1),
-                largeSize / 2 - 0.1f * scaleFactor);
-            GameObject rightMoustache = Instantiate(moustachePrefab, rightMoustachePosition, Quaternion.identity);
-            rightMoustache.transform.rotation = Quaternion.Euler(0, 180, 0); // Rotation symétrique pour la moustache droite
-            rightMoustache.transform.localScale = new Vector3(moustacheSize, moustacheSize, moustacheSize);
-            rightMoustache.transform.SetParent(creatureModel.transform);
+        GameObject moustachePrefab = SelectMoustachePrefab(creature);
+
+        if (numberOfMoustaches != 0)
+        {
+            for (int nbMoustache = 0; nbMoustache < numberOfMoustaches; nbMoustache++)
+            {
+                // Créer une moustache gauche
+                Vector3 leftMoustachePosition = headPosition + new Vector3(
+                    -largeSize / 3,
+                    largeSize / 4 - 0.35f * scaleFactor - 0.08f * scaleFactor * (nbMoustache + 1),
+                    largeSize / 2 - 0.1f * scaleFactor);
+                GameObject leftMoustache = Instantiate(moustachePrefab, leftMoustachePosition, Quaternion.identity);
+                leftMoustache.transform.localScale = new Vector3(moustacheSize, moustacheSize, moustacheSize);
+                leftMoustache.transform.SetParent(creatureModel.transform);
+
+                // Créer une moustache droite
+                Vector3 rightMoustachePosition = headPosition + new Vector3(
+                    largeSize / 3,
+                    largeSize / 4 - 0.35f * scaleFactor - 0.08f * scaleFactor * (nbMoustache + 1),
+                    largeSize / 2 - 0.1f * scaleFactor);
+                GameObject rightMoustache = Instantiate(moustachePrefab, rightMoustachePosition, Quaternion.identity);
+                rightMoustache.transform.rotation = Quaternion.Euler(0, 180, 0); // Rotation symétrique pour la moustache droite
+                rightMoustache.transform.localScale = new Vector3(moustacheSize, moustacheSize, moustacheSize);
+                rightMoustache.transform.SetParent(creatureModel.transform);
+            }
         }
     }
-}
 
 
-
+    /// <summary>
+    /// Selectionne le prefab adapté en fonction du type de moustache de la créature 
+    /// </summary>
+    /// <param name="creature">La créature dont ont génère les moustaches</param>
     private GameObject SelectMoustachePrefab(Creature creature)
     {
         switch (creature.TypeOfMoustache)
@@ -174,30 +200,33 @@ private void CreateMoustache(Vector3 headPosition, GameObject creatureModel, Cre
     /// </summary>
     /// <param name="headPosition">La position de la sphère tête</param>
     /// <param name="creatureModel">Le modèle de la créature</param>
-    /// <param name="creature">La créature dont les yeux doivent être générés</param>
-    private void CreateCornes(Vector3 headPosition, GameObject creatureModel, Creature creature)
+    /// <param name="creature">La créature dont les cornes doivent être générées</param>
+    private void CreateHorns(Vector3 headPosition, GameObject creatureModel, Creature creature)
     {
         float scaleFactor = creature.ScaleFactor;
+        Color creatureColor = creature.Color;
         float largeSize = 1.2f * scaleFactor;
         float size = 0.3f * scaleFactor;
 
-        // Créer un oeil gauche
-        Vector3 leftEyePosition = headPosition + new Vector3(
-            -largeSize / 6,
-            0.1f * scaleFactor,
-            largeSize / 2 - 0.1f * scaleFactor);
-        GameObject leftEye = Instantiate(eyePrefab, leftEyePosition, Quaternion.identity);
-        leftEye.transform.localScale = new Vector3(size, size, size);
-        leftEye.transform.SetParent(creatureModel.transform);
+        // Créer une corne gauche
+        Vector3 leftHornPosition = headPosition + new Vector3(
+            -largeSize / 4,
+            largeSize / 2,
+           0);
+        GameObject leftHorn = Instantiate(cubePrefab, leftHornPosition, Quaternion.identity);
+        leftHorn.transform.localScale = new Vector3(size, size, size);
+        leftHorn.GetComponent<Renderer>().material.color = creatureColor;
+        leftHorn.transform.SetParent(creatureModel.transform);
 
-        // Créer un oeil droite
-        Vector3 rightEyePosition = headPosition + new Vector3(
-            largeSize / 6,
-            0.1f * scaleFactor,
-            largeSize / 2 - 0.1f * scaleFactor);
-        GameObject rightEye = Instantiate(eyePrefab, rightEyePosition, Quaternion.identity);
-        rightEye.transform.localScale = new Vector3(size, size, size);
-        rightEye.transform.SetParent(creatureModel.transform);
+        // Créer une corne droite
+        Vector3 rightHornPosition = headPosition + new Vector3(
+            largeSize / 4,
+            largeSize / 2,
+            0);
+        GameObject rightHorn = Instantiate(cubePrefab, rightHornPosition, Quaternion.identity);
+        rightHorn.transform.localScale = new Vector3(size, size, size);
+        rightHorn.GetComponent<Renderer>().material.color = creatureColor;
+        rightHorn.transform.SetParent(creatureModel.transform);
     }
 
 
@@ -282,7 +311,7 @@ private void CreateMoustache(Vector3 headPosition, GameObject creatureModel, Cre
             }
             else
             {
-                tentacleShape = Instantiate(cubePrefab, finalPosition, Quaternion.identity);
+                tentacleShape = Instantiate(cubePrefab, finalPosition, Quaternion.Euler(0, 45, 0));
                 currentSize = Mathf.Max(initialSize * 0.8f - i * sizeReductionFactor, 0.1f); // Détermine la taille du cube (avec 0.1 en minimum)
             }
             tentacleShape.transform.localScale = new Vector3(currentSize, currentSize, currentSize);
