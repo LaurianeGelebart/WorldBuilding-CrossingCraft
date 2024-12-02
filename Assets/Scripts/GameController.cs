@@ -7,15 +7,16 @@ public class GameController : MonoBehaviour
     public CreatureGenerator creatureGenerator; // Référence au générateur de créatures
 
 
-    private Population creatures;
+    private Population creaturesPopulation;
 
     public FoodController foodController;  // Référence au FoodController
 
 
     void Start()
     {
-        creatures = new Population(creatureGenerator);
-        foodController.SetPopulation(creatures);  // Passer la référence de Population
+        creaturesPopulation = new Population(creatureGenerator);
+        creaturesPopulation.evolve();
+        foodController.SetPopulation(creaturesPopulation);  // Passer la référence de Population
     }
 
     void Update()
@@ -28,9 +29,9 @@ public class GameController : MonoBehaviour
         // }
 
         FoodController foodController = FindObjectOfType<FoodController>();
-        foreach (var creature in creatures.Members)
+        foreach (var creature in creaturesPopulation.Members)
         {
-            foodController.UpdateCreatureHunger(creature);
+            foodController.UpdateCreatureHunger(creaturesPopulation);
         }
     }
 }

@@ -11,20 +11,20 @@ public class Creature
     public Collider creatureCollider;  // Collider de la créature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
     public int genomeLength = 15;
-    public CreatureType creatureType;
 
     public float pv;
     public float faim;
 
-
+    private CreatureType _type;
     private Color _color;               // Couleur de la créature
     private int _tentaclesWidth;        // Longueur des tentacules 
     private int _numberOfTentacles;     // Nombre de tentacules
     private float _scaleFactor;         // Facteur de la taille globale de la créature
     private int _numberOfMoustaches;
     private int _typeOfMoustache;
-    private int _typeOfCornes; 
+    private int _typeOfCornes;
 
+    public CreatureType Type => _type;
     public Color Color => _color;
     public int TentaclesWidth => _tentaclesWidth;
     public int NumberOfTentacles => _numberOfTentacles;
@@ -103,15 +103,17 @@ public class Creature
     /// </summary>
     private void DecodeGenome()
     {
-        creatureType = DecodeCreatureType();
+        _type = DecodeCreatureType();
         _color = DecodeColor();
         _tentaclesWidth = DecodeTentaclesWidth();
         _numberOfTentacles = DecodeTentaclesNumber();
         _scaleFactor = DecodeScaleFactor();
+        _numberOfMoustaches = DecodeMoustacheNumber();
+        _typeOfMoustache = DecodeMoustacheType();
     }
 
     /// <summary>
-    /// Évaluer la fitness de la créature en fonction de ses attributs (sa couleur,  sa taille, et le nombre, la longuer et le creatureType de courbe des tentacules)
+    /// Évaluer la fitness de la créature en fonction de ses attributs (sa couleur,  sa taille, et le nombre, la longuer et le _type de courbe des tentacules)
     /// </summary>
     private void EvaluateFitness()
     {
@@ -131,10 +133,10 @@ public class Creature
         int colorBits = Utils.BitToInt(genome[1], genome[2]);
         switch (colorBits)
         {
-            case (3): return 1.75f;
-            case (2): return 2.5f;
-            case (1): return 2.25f;
-            case (0): return 3.5f;
+            case (3): return (_type == CreatureType.Forest) ? 3.5f : 0.5f;
+            case (2): return (_type == CreatureType.Forest) ? 2.75f : 1f;
+            case (1): return (_type == CreatureType.Forest) ? 2.75f : 1f;
+            case (0): return (_type == CreatureType.Forest) ? 1f : 7.5f;
             default: return 0;
         }
     }
@@ -148,10 +150,10 @@ public class Creature
         int scaleBits = Utils.BitToInt(genome[7], genome[8]);
         switch (scaleBits)
         {
-            case (3): return 1.5f;
-            case (2): return 2.75f;
-            case (1): return 3.25f;
-            case (0): return 2.5f;
+            case (3): return (_type == CreatureType.Forest) ? 2.5f : 0.5f;
+            case (2): return (_type == CreatureType.Forest) ? 3.75f : 0.5f;
+            case (1): return (_type == CreatureType.Forest) ? 2.75f : 1.5f;
+            case (0): return (_type == CreatureType.Forest) ? 1f : 7.5f;
             default: return 0;
         }
     }
@@ -263,7 +265,7 @@ public class Creature
     private int DecodeTentaclesNumber()
     {
         int legsBits = Utils.BitToInt(genome[6], genome[7]);
-        return (legsBits + 2) * 2; 
+        return (legsBits + 2) * 2;
     }
 
     /// <summary>
@@ -294,5 +296,32 @@ public class Creature
             default: return new Vector3(0, t, 0); // Ligne droite
         }
     }
+
+    /// <summary>
+    /// Décode le nombre de moustache à partir des bits du génome
+    /// </summary>
+    /// <returns>Nombre de moustache</returns>
+    private int DecodeMoustacheNumber()
+    {
+        return Utils.BitToInt(genome[11], genome[12]);
+    }
+
+    /// <summary>
+    /// Décode le type de moustache à partir des bits du génome
+    /// </summary>
+    /// <returns>Type de moustache</returns>
+    private int DecodeMoustacheType()
+    {
+        return Utils.BitToInt(genome[13], genome[14]);
+    }
+
+    //  /// <summary>
+    // /// Décode le nombre de moustache à partir des bits du génome
+    // /// </summary>
+    // /// <returns>Nombre de tentacules</returns>
+    // private int DecodeCorneType()
+    // {
+    //     return Utils.BitToInt(genome[15], genome[16]);
+    // }
 
 }

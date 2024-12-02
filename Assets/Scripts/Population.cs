@@ -28,7 +28,7 @@ public class Population
 
     public void evolve() 
     {
-        this.geneticAlgorithm.EvolvePopulation(1, members);
+        this.geneticAlgorithm.EvolvePopulation(4, members);
     }
 
     public void initializePopulation()
