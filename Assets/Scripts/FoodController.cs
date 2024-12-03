@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class FoodController : MonoBehaviour
 {
-    public float hungerDecreaseRate = 1f;     // Vitesse à laquelle la faim diminue
-    public float foodValue = 50f;             // Quantité de nourriture qui restaure la faim
-    public float foodSpawnInterval = 10f;     // Intervalle de réapparition de la nourriture
-    public GameObject foodPrefab;             // Prefab de nourriture à faire spawn
+    public float hungerDecreaseRate = 1f;     // Vitesse Ã  laquelle la faim diminue
+    public float foodValue = 50f;             // QuantitÃ© de nourriture qui restaure la faim
+    public float foodSpawnInterval = 10f;     // Intervalle de rÃ©apparition de la nourriture
+    public GameObject foodPrefab;             // Prefab de nourriture Ã  faire spawn
     private Population currentPopulation;
 
     private float foodSpawnTimer = 0f;
@@ -19,7 +19,7 @@ public class FoodController : MonoBehaviour
 
     void Update()
     {
-        // Faire spawner de la nourriture à intervalles réguliers
+        // Faire spawner de la nourriture Ã© intervalles rÃ©guliers
         foodSpawnTimer += Time.deltaTime;
         if (foodSpawnTimer >= foodSpawnInterval)
         {
@@ -30,7 +30,7 @@ public class FoodController : MonoBehaviour
 
     void SpawnFood()
     {
-        // Spawner la nourriture à une position aléatoire dans la scène
+        // Spawner la nourriture Ã© une position alÃ©atoire dans la scÃ©ne
         Vector3 spawnPosition = new Vector3(
             Random.Range(0, 50),
             0.5f,
@@ -43,36 +43,36 @@ public class FoodController : MonoBehaviour
         }
     }
 
-    // À ajouter dans le GameController ou à appeler depuis celui-ci
+    // Ajouter dans le GameController ou Ã  appeler depuis celui-ci
     public void UpdateCreatureHunger(Creature creature)
     {
-        // Diminuer la faim de la créature au fil du temps
+        // Diminuer la faim de la crÃ©ature au fil du temps
         creature.faim -= hungerDecreaseRate * Time.deltaTime;
 
-        // Si la faim tombe en dessous de zéro, on peut ajouter des conséquences
+        // Si la faim tombe en dessous de zÃ©ro, on peut ajouter des consÃ©quences
         if (creature.faim <= 0)
         {
             creature.faim = 0;
-            // Potentiellement réduire la fitness ou faire mourir la créature
+            // Potentiellement rÃ©duire la fitness ou faire mourir la crÃ©ature
         }
     }
 
     /*void OnTriggerEnter(Collider other)
     {
-        // Vérifier si l'objet qui entre en collision est de la nourriture
+        // VÃ©rifier si l'objet qui entre en collision est de la nourriture
         if (other.CompareTag("Food"))
         {
-            // Trouver la créature la plus proche qui peut manger
+            // Trouver la crÃ©ature la plus proche qui peut manger
             Collider[] colliders = Physics.OverlapSphere(transform.position, 1f);
             foreach (Collider collider in colliders)
             {
                 Creature creature = GetCreatureFromCollider(collider);
                 if (creature != null)
                 {
-                    // Augmenter la faim de la créature
+                    // Augmenter la faim de la crÃ©ature
                     creature.faim += foodValue;
 
-                    // Détruire la nourriture
+                    // DÃ©truire la nourriture
                     Destroy(other.gameObject);
                     break;
                 }

@@ -341,7 +341,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eyePrefab: {fileID: 8553344173421237655, guid: 42966e637f1930d42b618918f285350f, type: 3}
   spherePrefab: {fileID: 3757173234127312409, guid: 546e392acc6632c45bfd952d12724fc3, type: 3}
-  moustachePrefab: {fileID: 5354020738420248205, guid: cbb1cd5752c46e0479bf7fa7cfcb55fa, type: 3}
+  moustache1Prefab: {fileID: 7542660835921498418, guid: 59bd647d78072bd409046ed66ae8cea9, type: 3}
+  moustache2Prefab: {fileID: 2899249373972217708, guid: a7e771679da33044485f1b9c9a8f6a9e, type: 3}
+  moustache3Prefab: {fileID: 8908733390747438361, guid: b5fc4d74b088ba141ae7652183a3bf22, type: 3}
+  moustache4Prefab: {fileID: 5694422080209112526, guid: 4c885aeeb676d904a8a485e55ab63fe3, type: 3}
   cornePrefab: {fileID: 1311568603942818291, guid: 25e70a8db7cf5e34cbb5cfae806b8ac5, type: 3}
   cubePrefab: {fileID: 1311568603942818291, guid: 25e70a8db7cf5e34cbb5cfae806b8ac5, type: 3}
 --- !u!4 &804220709

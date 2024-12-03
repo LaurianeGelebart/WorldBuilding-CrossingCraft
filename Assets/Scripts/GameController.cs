@@ -13,8 +13,8 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        creaturesPopulation = new Population(_creaturesPopulation);
-        creaturesPopulation.evolve();
+        _creaturesPopulation = new Population(creatureGenerator, 10);
+        _creaturesPopulation.Evolve(1);
         foodController.SetPopulation(_creaturesPopulation);  // Passer la référence de Population
     }
 
@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
         FoodController foodController = FindObjectOfType<FoodController>();
         foreach (var creature in _creaturesPopulation.Members)
         {
-            foodController.UpdateCreatureHunger(creaturesPopulation);
+            foodController.UpdateCreatureHunger(creature);
         }
     }
 }

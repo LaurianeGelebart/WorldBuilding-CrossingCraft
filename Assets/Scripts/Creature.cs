@@ -63,22 +63,6 @@ public class Creature
         AddColliderToModel();
     }
 
-    private void AddColliderToModel()
-    {
-        // Ajouter un Collider de type CapsuleCollider au modèle
-        CapsuleCollider collider = model.AddComponent<CapsuleCollider>();
-
-        // Ajuster la taille du collider en fonction du facteur d'échelle
-        float scaleFactor = ScaleFactor;
-        collider.radius = 0.5f * scaleFactor;
-        collider.height = 2f * scaleFactor;
-
-        // Rendre le collider comme un trigger pour les interactions
-        collider.isTrigger = true;
-
-        // Stocker la référence du Collider
-        creatureCollider = collider;
-    }
 
     /// <summary>
     /// Constructeur pour créer une créature à partir d'un génome déjà existant
@@ -94,6 +78,12 @@ public class Creature
         DecodeGenome();
         EvaluateFitness();
         model = creatureGenerator.GenerateModel(this);
+
+        CreatureMovement movementScript = model.AddComponent<CreatureMovement>();
+        movementScript.Initialize(this);
+
+        // Ajouter un Collider au modèle
+        AddColliderToModel();
     }
 
     /// <summary>   
@@ -101,7 +91,7 @@ public class Creature
     /// </summary>
     public void UpdatePv()
     {
-        pv -= 10 * Time.deltaTime;
+        pv -= 1 * Time.deltaTime;
     }
 
     /// <summary>
@@ -113,6 +103,24 @@ public class Creature
         {
             UnityEngine.Object.Destroy(model);
         }
+    }
+
+
+    private void AddColliderToModel()
+    {
+        // Ajouter un Collider de type CapsuleCollider au modèle
+        CapsuleCollider collider = model.AddComponent<CapsuleCollider>();
+
+        // Ajuster la taille du collider en fonction du facteur d'échelle
+        float scaleFactor = ScaleFactor;
+        collider.radius = 0.5f * scaleFactor;
+        collider.height = 2f * scaleFactor;
+
+        // Rendre le collider comme un trigger pour les interactions
+        collider.isTrigger = true;
+
+        // Stocker la référence du Collider
+        creatureCollider = collider;
     }
 
 
