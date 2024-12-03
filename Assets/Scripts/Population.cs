@@ -1,50 +1,70 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// public class Population<C> where C : Creature
-public class Population
+public class Population 
 {
-    public int populationSize = 1;           // Taille de la population
     public float mutationRate = 0.01f;        // Taux de mutation
     public float selectionThreshold = 0.7f;   // Taux de sélection
-  
-    public CreatureGenerator creatureGenerator; // Référence au générateur de créatures
-    private List<Creature> members;
-    private GeneticAlgorithm geneticAlgorithm;
-
-    public List<Creature> Members
+     
+    private int _populationSize;           // Taille de la population
+    private CreatureGenerator _creatureGenerator; // Référence au générateur de créatures
+    private List<Creature> _members;
+    private GeneticAlgorithm _geneticAlgorithm;
+     
+    public List<Creature> Members 
     {
-        get { return members; }  
+        get { return _members; }
     }
-
-    public Population(CreatureGenerator creatureGenerator)
+     
+    public Population(CreatureGenerator creatureGenerator, int populationSize)
     {
-        this.creatureGenerator = creatureGenerator;
-
-        this.geneticAlgorithm = new GeneticAlgorithm(populationSize, mutationRate, selectionThreshold, creatureGenerator);
-        this.initializePopulation();
+        _creatureGenerator = creatureGenerator;
+        _populationSize = populationSize;
+         
+        _geneticAlgorithm = new GeneticAlgorithm(populationSize, mutationRate, selectionThreshold, _creatureGenerator);
+        InitializePopulation();
     }
-
-    public void evolve() 
+     
+    public void Update()
     {
-        this.geneticAlgorithm.EvolvePopulation(4, members);
-    }
-
-    public void initializePopulation()
-    {
-        members = new List<Creature>();
-
-        for (int i = 0; i < populationSize; i++)
+        Evolve(1);
+        
+        for (int i = _members.Count - 1; i >= 0; i--) // On itère à l'envers car on supprime des membres de la liste
         {
-            Creature newCreature = new Creature(creatureGenerator);
-            members.Add(newCreature);
+            _members[i].UpdatePv();
+            CheckIfAlive(_members[i]);
         }
     }
-
-    // public Creature newCreature(List<int> generatedGenome){
-    //     return new Creature(generatedGenome, this.creatureGenerator);
-    // }
-
-
+     
+    public void Evolve(int generationNumber)
+    {
+        List<Creature> newGeneration = _geneticAlgorithm.EvolvePopulation(generationNumber, _members);
+        foreach (Creature newCreature in newGeneration)
+        {
+            _members.Add(newCreature);
+        }
+    }
+     
+    private void InitializePopulation()
+    {
+        _members = new List<Creature>();
+         
+        for (int i = 0; i < _populationSize; i++)
+        {
+            Creature newCreature = new Creature(_creatureGenerator);
+            _members.Add(newCreature);
+        }
+    }
+    
+    private void CheckIfAlive(Creature creature)
+    {
+        if(creature.pv < 0) 
+        {
+            Debug.Log("------------Mort----------------");
+            _members.Remove(creature);
+            creature.Die();
+        }
+    }
+     
+    
 }

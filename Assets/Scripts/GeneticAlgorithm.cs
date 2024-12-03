@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GeneticAlgorithm
-// public class GeneticAlgorithm<C> where C : Creature
 {
     private int _populationSize;         // Taille de la actualGeneration
     private float _mutationRate;      // Taux de mutation
@@ -11,7 +10,7 @@ public class GeneticAlgorithm
     private float fitnessImportanceBias = 0.5f; // Biais de sélection
 
     private CreatureGenerator _creatureGenerator;
-    
+
 
     public GeneticAlgorithm(int populationSize, float mutationRate, float selectionThreshold, CreatureGenerator creatureGenerator)
     {
@@ -20,12 +19,12 @@ public class GeneticAlgorithm
         _selectionThreshold = selectionThreshold;
         _creatureGenerator = creatureGenerator;
     }
-    
+
 
     // Exécute l'évolution de la actualGeneration sur un nombre de générations défini
     public List<Creature> EvolvePopulation(int generations, List<Creature> actualGeneration)
     {
-        int iteration = 0; 
+        int iteration = 0;
         while (iteration < generations)
         {
             // Sélectionner les meilleures créatures
@@ -38,15 +37,25 @@ public class GeneticAlgorithm
                 Creature parent1 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
                 Creature parent2 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
 
-                Creature child = Recombination(parent1, parent2); 
-                Mutate(child); 
+                Creature child = Recombination(parent1, parent2);
+
+                // Si les parents ne sont pas du même type, on choisi de nouveaux parents
+                while (child == null && selectedPopulation.Count > 1)
+                {
+                    parent2 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
+                    child = Recombination(parent1, parent2);
+                }
+                // Si on n'a toujours pas de child valide
+                if (child == null) continue;
+
+                Mutate(child);
                 newPopulation.Add(child);
             }
 
             // Remplacer l'ancienne actualGeneration par la nouvelle
             actualGeneration = newPopulation;
 
-            iteration++; 
+            iteration++;
         }
         return actualGeneration;
     }
@@ -62,7 +71,7 @@ public class GeneticAlgorithm
         foreach (var creature in actualGeneration)
         {
             float selectionChance = creature.fitness + Random.Range(0f, 1f) * creature.fitness * 0.1f;
-            if (selectionChance >= (actualGeneration[0].fitness * fitnessImportanceBias)) 
+            if (selectionChance >= (actualGeneration[0].fitness * fitnessImportanceBias))
             {
                 selectedPopulation.Add(creature);
             }
@@ -76,11 +85,17 @@ public class GeneticAlgorithm
         return selectedPopulation;
     }
 
-    // Crée une nouvelle créature à partir de la recombinaison de deux parents
+    // Crée une nouvelle créature à partir de la recombinaison de deux parents s'ils sont du même type, sinon retourne null 
     private Creature Recombination(Creature parent1, Creature parent2)
     {
+        // Vérifier que les parents sont du même type
+        if (parent1.Type != parent2.Type)
+        {
+            return null;
+        }
+
         List<int> genome = new List<int>(new int[parent1.genomeLength]);
-        int crossoverPoint = Random.Range(0, parent1.genomeLength / 2);
+        int crossoverPoint = Random.Range(1, (parent1.genomeLength / 2) + 1); // crossover tous les différents gènes en évitant le premier 
 
         for (int i = 0; i < parent1.genomeLength; i++)
         {

@@ -12,7 +12,7 @@ public class Creature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
     public int genomeLength = 19;
 
-    public float pv;
+    public float pv = 100;
     public float faim;
 
     private CreatureType _type;
@@ -96,6 +96,24 @@ public class Creature
         model = creatureGenerator.GenerateModel(this);
     }
 
+    /// <summary>   
+    /// Cycle de la vie, descend les pv de la créature en fonction du temps qui passe 
+    /// </summary>
+    public void UpdatePv()
+    {
+        pv -= 10 * Time.deltaTime;
+    }
+
+    /// <summary>
+    /// Mort de la créature, détruit son model 3D 
+    /// </summary>
+    public void Die()
+    {
+        if (model != null)
+        {
+            UnityEngine.Object.Destroy(model);
+        }
+    }
 
 
     /// <summary>
@@ -135,10 +153,10 @@ public class Creature
         int colorBits = Utils.BitToInt(genome[1], genome[2]);
         switch (colorBits)
         {
-            case (3): return (_type == CreatureType.Forest) ? 3.5f : 0.5f;
-            case (2): return (_type == CreatureType.Forest) ? 2.75f : 1f;
-            case (1): return (_type == CreatureType.Forest) ? 2.75f : 1f;
-            case (0): return (_type == CreatureType.Forest) ? 1f : 7.5f;
+            case (3): return (_type == CreatureType.Forest) ? 3f : 2f;
+            case (2): return (_type == CreatureType.Forest) ? 2.75f : 2.5f;
+            case (1): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
+            case (0): return (_type == CreatureType.Forest) ? 1.75f : 3f;
             default: return 0;
         }
     }
@@ -152,10 +170,10 @@ public class Creature
         int scaleBits = Utils.BitToInt(genome[7], genome[8]);
         switch (scaleBits)
         {
-            case (3): return (_type == CreatureType.Forest) ? 2.5f : 0.5f;
-            case (2): return (_type == CreatureType.Forest) ? 3.75f : 0.5f;
-            case (1): return (_type == CreatureType.Forest) ? 2.75f : 1.5f;
-            case (0): return (_type == CreatureType.Forest) ? 1f : 7.5f;
+            case (3): return (_type == CreatureType.Forest) ? 3f : 1.75f;
+            case (2): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
+            case (1): return (_type == CreatureType.Forest) ? 2.5f : 2.75f;
+            case (0): return (_type == CreatureType.Forest) ? 2f : 3f;
             default: return 0;
         }
     }
@@ -169,10 +187,10 @@ public class Creature
         int tentaclesWidthBits = Utils.BitToInt(genome[3], genome[4]);
         switch (tentaclesWidthBits)
         {
-            case (3): return (_type == CreatureType.Forest) ? 1.5f : 1.5f;
-            case (2): return (_type == CreatureType.Forest) ? 3f : 3f;
-            case (1): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
-            case (0): return (_type == CreatureType.Forest) ? 2f : 2f;
+            case (3): return (_type == CreatureType.Forest) ? 2f : 1.5f;
+            case (2): return (_type == CreatureType.Forest) ? 3.5f : 3f;
+            case (1): return (_type == CreatureType.Forest) ? 3f : 3.5f;
+            case (0): return (_type == CreatureType.Forest) ? 1.5f : 2f;
             default: return 0;
         }
     }
@@ -220,10 +238,10 @@ public class Creature
         int moustacheBits = Utils.BitToInt(genome[11], genome[12]);
         switch (moustacheBits)
         {
-            case (3): return (_type == CreatureType.Forest) ? 4f : 4f;
-            case (2): return (_type == CreatureType.Forest) ? 1.5f : 1.5f;
-            case (1): return (_type == CreatureType.Forest) ? 1.5f : 1.5f;
-            case (0): return (_type == CreatureType.Forest) ? 3.5f : 3.5f;
+            case (3): return (_type == CreatureType.Forest) ? 3f : 3f;
+            case (2): return (_type == CreatureType.Forest) ? 3f : 3f;
+            case (1): return (_type == CreatureType.Forest) ? 2f : 2f;
+            case (0): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
             default: return 0;
         }
     }
@@ -239,7 +257,7 @@ public class Creature
         {
             case (3): return (_type == CreatureType.Forest) ? 2f : 2f;
             case (2): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
-            case (1): return (_type == CreatureType.Forest) ? 3f : 3f;
+            case (1): return (_type == CreatureType.Forest) ? 3.5f : 3.5f;
             case (0): return (_type == CreatureType.Forest) ? 3f : 3f;
             default: return 0;
         }
@@ -358,7 +376,7 @@ public class Creature
     private float DecodePV()
     {
         float pvBits = Utils.BitToInt(genome[15], genome[16]);
-        return (pvBits+5f) * 0.3f;
+        return (pvBits + 5f) * 0.3f;
     }
 
     /// <summary>
@@ -369,7 +387,7 @@ public class Creature
     {
         float hungerBits = Utils.BitToInt(genome[17], genome[18]);
         // float mappedValue = Mathf.Lerp(minOutput, maxOutput, Mathf.InverseLerp(minInput, maxInput, value));
-        return (hungerBits+5f) * 0.3f;
+        return (hungerBits + 5f) * 0.3f;
     }
 
 
