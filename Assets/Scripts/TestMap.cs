@@ -1,37 +1,86 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TestMap : MonoBehaviour
 {
-    public GridmapPrefab gridmap;
+    Gridmap<UnitTile> gridmap;
+
+    public List<GenericTile> tileset;
 
     // Start is called before the first frame update
     void Start()
     {
-        gridmap.GenerateCells();
-
-        var simpleUnits = gridmap.CellTileset.FindAll(unit => unit.tile.size == Vector3Int.one);
-        for (int idx = 0; idx < simpleUnits.Count; idx++)
+        ParseTileset();
+        for (int idx = gridmap.tileset.Count - 1; idx >= 0; idx--)
         {
-            int x = idx % 32;
-            int z = idx / 32;
-
-            var unitTile = simpleUnits[idx];
-            gridmap.PlaceCell(unitTile, new Vector3Int(x, 0, z));
+            var unitTile = gridmap.tileset[idx];
+            var pos = new Vector3(idx % 8, 0, idx / 8) * 2;
+            var go = unitTile.Instantiate(pos);
+            go.transform.parent = transform;
         }
+    }
 
-        var bigTiles = gridmap.tileset.FindAll(tile => tile.size != Vector3Int.one);
-        for (int p = 0; p < bigTiles.Count; p++)
+    void ParseTileset()
+    {
+        List<UnitTile> unitTiles = new();
+        foreach (var tile in tileset)
         {
-            var tile = bigTiles[p];
-            for (int r = 0; r < 4; r++)
+            unitTiles.AddRange(CreateUnitTiles(tile));
+        }
+        gridmap = new Gridmap<UnitTile>(new Vector3(2, 2, 2), new Vector3(0, 0, 0), unitTiles);
+    }
+    List<UnitTile> CreateUnitTiles(GenericTile tile)
+    {
+        List<UnitTile> units = new();
+        for (int k = 0; k < 4; k++)
+        {
+            for (int j = 0; j < 4; j++)
             {
-                for (int f = 0; f < 8; f++)
+                if (!tile.rotatableY && k != 0) continue;
+                if (!tile.flippableX && (j & 1) == 1) continue;
+                if (!tile.flippableZ && (j >> 1 & 1) == 1) continue;
+                units.Add(new UnitTile
                 {
-                    gridmap.PlaceTile(tile, new Vector3Int((r * 8 + f) * 3, 2, p), new Vector3Int(f & 1, f >> 1 & 1, f >> 2 & 1), (GridOrientationPF)r);
-                }
+                    tile = tile,
+                    rotationY = (Rotation2D)k,
+                    flipX = (j & 1) == 1,
+                    flipZ = (j >> 1 & 1) == 1,
+                });
             }
         }
+        return units;
+    }
+}
 
-        gridmap.RefreshGameObjects();
+public enum Rotation2D
+{
+    None = 0,
+    Right = 1,
+    Half = 2,
+    Left = 3,
+}
+
+[System.Serializable]
+public class GenericTile
+{
+    public GameObject prefab;
+    public bool rotatableY;
+    public bool flippableX;
+    public bool flippableZ;
+}
+
+public class UnitTile
+{
+    public GenericTile tile;
+    public Rotation2D rotationY;
+    public bool flipX;
+    public bool flipZ;
+
+    public GameObject Instantiate(Vector3 position)
+    {
+        var go = Object.Instantiate(tile.prefab, position, Quaternion.identity);
+        go.transform.Rotate(0, 90 * (int)rotationY, 0);
+        go.transform.localScale = new Vector3(flipX ? -1 : 1, 1, flipZ ? -1 : 1);
+        return go;
     }
 }
