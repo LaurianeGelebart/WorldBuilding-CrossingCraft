@@ -10,6 +10,7 @@ public class WaveFunctionCollapse
     public List<WFCTile> tileset;
     public Vector3Int min, max;
     public WFCSockets borderSockets;
+    public Func<Vector3Int, WFCTile, float> weightCallback = (pos, tile) => 1;
 
     readonly Dictionary<Vector3Int, WFCCell> cells = new();
 
@@ -34,9 +35,14 @@ public class WaveFunctionCollapse
         GetAt(pos).CollapseTo(tile);
         Propagate(pos);
     }
+    public void Clear()
+    {
+        cells.Clear();
+    }
 
     public void Initialize()
     {
+        Clear();
         foreach (var tile in tileset)
         {
             tile.FetchValidNeighbors(tileset);
@@ -103,15 +109,43 @@ public class WaveFunctionCollapse
         return possiblePositions[UnityEngine.Random.Range(0, possiblePositions.Count)];
     }
 
-    public void CollapseAt(Vector3Int pos)
+    public int GetRandomIndexFromWeight(Vector3Int pos)
     {
         WFCCell cell = cells[pos];
-        if (cell.Collapsed) return;
+        if (cell.Collapsed) return 0;
         if (cell.Entropy == 0)
-        {
             throw new System.Exception($"No possible tiles at {pos}");
+
+        float[] weights = new float[cell.possibleTiles.Count];
+        for (int i = 0; i < cell.possibleTiles.Count; i++)
+        {
+            weights[i] = weightCallback(pos, cell.possibleTiles[i]);
         }
-        cell.CollapseTo(cell.possibleTiles[UnityEngine.Random.Range(0, cell.possibleTiles.Count)]);
+        float totalWeight = weights.Sum();
+        float randomWeight = UnityEngine.Random.Range(0, totalWeight);
+        for (int i = 0; i < weights.Length; i++)
+        {
+            randomWeight -= weights[i];
+            if (randomWeight <= 0)
+            {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public void CollapseAt(Vector3Int pos)
+    {
+        // WFCCell cell = cells[pos];
+        // if (cell.Collapsed) return;
+        // if (cell.Entropy == 0)
+        // {
+        //     throw new System.Exception($"No possible tiles at {pos}");
+        // }
+        // int index = UnityEngine.Random.Range(0, cell.possibleTiles.Count);
+        // cell.CollapseTo(cell.possibleTiles[index]);
+        int index = GetRandomIndexFromWeight(pos);
+        cells[pos].CollapseTo(cells[pos].possibleTiles[index]);
     }
 
     // Something is wrong; it ends up with an enthropy of 0, which should not happen
@@ -363,6 +397,7 @@ public class WFCTile
     public WFCSockets sockets;
     public int rotationY;
     public bool flipX;
+    public string Name { get { return prefab.name; } }
 
     readonly List<WFCTile> xPosNeighbors = new();
     readonly List<WFCTile> xNegNeighbors = new();
@@ -391,6 +426,12 @@ public class WFCTile
 
     public void FetchValidNeighbors(List<WFCTile> tiles)
     {
+        xPosNeighbors.Clear();
+        xNegNeighbors.Clear();
+        yPosNeighbors.Clear();
+        yNegNeighbors.Clear();
+        zPosNeighbors.Clear();
+        zNegNeighbors.Clear();
         foreach (var tile in tiles)
         {
             if (WFCSockets.IsCompatible(sockets.xPos, tile.sockets.xNeg))

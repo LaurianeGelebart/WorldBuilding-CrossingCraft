@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using TMPro;
 using UnityEngine;
 
 public class TestWFC : MonoBehaviour
@@ -8,6 +9,8 @@ public class TestWFC : MonoBehaviour
     public Vector3Int min, max;
     public WFCSockets borderSockets;
     public List<GeneralWFCTile> tileset;
+
+    public TextMeshProUGUI stateText;
 
     readonly WaveFunctionCollapse wfc = new();
 
@@ -26,26 +29,20 @@ public class TestWFC : MonoBehaviour
         wfc.min = min;
         wfc.max = max;
         wfc.borderSockets = borderSockets;
-        wfc.Initialize();
-        // try
-        // {
-        //     wfc.DoTheThing();
-        // }
-        // catch (System.Exception err)
-        // {
-        //     Debug.Log(err);
-        // }
-        // RenderWFC();
 
-        wfc.SetAt(new(0, 0, 0), wfc.tileset.Find(t => t.prefab.name == "ground"));
+        Reinitialize();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (halted) return;
+        if (halted)
+        {
+            return;
+        }
         if (wfc.IsCollapsed())
         {
+            stateText.text = "Collapsed";
             halted = true;
         }
         else
@@ -53,16 +50,34 @@ public class TestWFC : MonoBehaviour
             try
             {
                 iteration++;
+                stateText.text = $"Iteration {iteration}";
                 wfc.Iterate();
             }
             catch (System.Exception err)
             {
+                stateText.text = $"Error at iteration {iteration}";
                 Debug.Log($"At iteration {iteration}");
                 halted = true;
                 Debug.LogError(err);
             }
         }
         RenderWFC();
+    }
+
+    public void Reinitialize()
+    {
+        wfc.Initialize();
+        // wfc.SetAt(new(0, 0, 0), wfc.tileset.Find(t => t.prefab.name == "ground"));
+        for (int x = wfc.min.x; x <= wfc.max.x; x++)
+        {
+            for (int z = wfc.min.z; z <= wfc.max.z; z++)
+            {
+                wfc.SetAt(new(x, wfc.max.y, z), wfc.tileset.Find(t => t.sockets.IsAll("-1"))); // air tiles
+                wfc.SetAt(new(x, wfc.min.y, z), wfc.tileset.Find(t => t.sockets.IsAll("-2"))); // underground tiles
+            }
+        }
+        halted = false;
+        iteration = 0;
     }
 
     void RenderWFC()
