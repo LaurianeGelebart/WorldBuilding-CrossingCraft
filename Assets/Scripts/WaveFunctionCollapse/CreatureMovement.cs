@@ -53,19 +53,18 @@ public class CreatureMovement : MonoBehaviour
 
     void FindNearestFood()
     {
-        // Find all food objects in the scene
-        GameObject[] foodObjects = GameObject.FindGameObjectsWithTag("Food");
+        // Chercher tous les prefabs dans la scène
+        GameObject[] prefabs = GameObject.FindGameObjectsWithTag("Food");
         float closestDistance = Mathf.Infinity;
 
-        foreach (GameObject food in foodObjects)
+        foreach (GameObject prefab in prefabs)
         {
-            float distance = Vector3.Distance(transform.position, food.transform.position);
+            float distance = Vector3.Distance(transform.position, prefab.transform.position);
 
-            // Check if this food is closer than the previous closest
             if (distance < closestDistance)
             {
                 closestDistance = distance;
-                currentTarget = food;
+                currentTarget = prefab;
             }
         }
     }
@@ -99,6 +98,34 @@ public class CreatureMovement : MonoBehaviour
             // Destroy the food
             Destroy(currentTarget);
             currentTarget = null;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // Récupérer le composant FoodItem
+        FoodItem foodItem = other.GetComponent<FoodItem>();
+
+        if (foodItem != null)
+        {
+            if (foodItem.foodCategory == FoodCategory.Mushroom)
+            {
+                // Effet de poison des champignons
+                associatedCreature.faim -= 30f;  // Baisse importante de la faim
+                associatedCreature.pv -= 10f;     // Légère baisse de vie
+
+            }
+            else
+            {
+                // Nourriture standard
+                associatedCreature.faim = Mathf.Min(
+                    associatedCreature.faim + foodItem.nutritionalValue,
+                    100f
+                );
+            }
+
+            // Détruire la nourriture après consommation
+            Destroy(other.gameObject);
         }
     }
 }

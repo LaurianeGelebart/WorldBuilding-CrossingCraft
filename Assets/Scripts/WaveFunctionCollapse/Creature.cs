@@ -103,6 +103,9 @@ public class Creature
         {
             UnityEngine.Object.Destroy(model);
         }
+
+        // Réduire la population ou gérer la disparition de la créature
+
     }
 
 
