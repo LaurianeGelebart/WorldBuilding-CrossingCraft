@@ -6,12 +6,12 @@ public class CreatureGenerator : MonoBehaviour
 {
     public GameObject eyePrefab;    // Prefab pour les yeux 
     public GameObject spherePrefab; // Prefab pour les sphères du corps
-    public GameObject moustache1Prefab; // Prefab pour les sphères du corps
-    public GameObject moustache2Prefab; // Prefab pour les sphères du corps
-    public GameObject moustache3Prefab; // Prefab pour les sphères du corps
-    public GameObject moustache4Prefab; // Prefab pour les sphères du corps
-    public GameObject cornePrefab; // Prefab pour les sphères du corps
-    public GameObject cubePrefab; // Prefab pour les sphères du corps
+    public GameObject moustache1Prefab; // Prefab pour les moustaches
+    public GameObject moustache2Prefab; // Prefab pour les moustaches
+    public GameObject moustache3Prefab; // Prefab pour les moustaches
+    public GameObject moustache4Prefab; // Prefab pour les moustaches
+    public GameObject hornPrefab; // Prefab pour les cornes 
+    public GameObject cubePrefab; // Prefab pour les cube du corps
     private Vector3 _initialPosition;
 
     /// <summary>
@@ -206,24 +206,24 @@ public class CreatureGenerator : MonoBehaviour
         float scaleFactor = creature.ScaleFactor;
         Color creatureColor = creature.Color;
         float largeSize = 1.2f * scaleFactor;
-        float size = 0.3f * scaleFactor;
+        float size = 40f * scaleFactor;
 
         // Créer une corne gauche
         Vector3 leftHornPosition = headPosition + new Vector3(
-            -largeSize / 4,
+            0,
             largeSize / 2,
            0);
-        GameObject leftHorn = Instantiate(cubePrefab, leftHornPosition, Quaternion.identity);
+        GameObject leftHorn = Instantiate(hornPrefab, leftHornPosition, Quaternion.Euler(-90,90,0));
         leftHorn.transform.localScale = new Vector3(size, size, size);
         leftHorn.GetComponent<Renderer>().material.color = creatureColor;
         leftHorn.transform.SetParent(creatureModel.transform);
 
         // Créer une corne droite
         Vector3 rightHornPosition = headPosition + new Vector3(
-            largeSize / 4,
+            0,
             largeSize / 2,
             0);
-        GameObject rightHorn = Instantiate(cubePrefab, rightHornPosition, Quaternion.identity);
+        GameObject rightHorn = Instantiate(hornPrefab, rightHornPosition, Quaternion.Euler(-90,-90,0));
         rightHorn.transform.localScale = new Vector3(size, size, size);
         rightHorn.GetComponent<Renderer>().material.color = creatureColor;
         rightHorn.transform.SetParent(creatureModel.transform);
