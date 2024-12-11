@@ -345,7 +345,7 @@ MonoBehaviour:
   moustache2Prefab: {fileID: 2899249373972217708, guid: a7e771679da33044485f1b9c9a8f6a9e, type: 3}
   moustache3Prefab: {fileID: 8908733390747438361, guid: b5fc4d74b088ba141ae7652183a3bf22, type: 3}
   moustache4Prefab: {fileID: 5694422080209112526, guid: 4c885aeeb676d904a8a485e55ab63fe3, type: 3}
-  cornePrefab: {fileID: 1311568603942818291, guid: 25e70a8db7cf5e34cbb5cfae806b8ac5, type: 3}
+  hornPrefab: {fileID: 5740257124671799458, guid: 4b772044c3539bd4db4af96ba82a8aa6, type: 3}
   cubePrefab: {fileID: 1311568603942818291, guid: 25e70a8db7cf5e34cbb5cfae806b8ac5, type: 3}
 --- !u!4 &804220709
 Transform:
