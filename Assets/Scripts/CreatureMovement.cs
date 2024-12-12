@@ -3,7 +3,7 @@ using UnityEngine;
 public class CreatureMovement : MonoBehaviour
 {
     private Creature associatedCreature;
-    public float moveSpeed = 2f;
+    public float moveSpeed = 5f;
     private GameObject currentTarget;
 
     public void Initialize(Creature creature)

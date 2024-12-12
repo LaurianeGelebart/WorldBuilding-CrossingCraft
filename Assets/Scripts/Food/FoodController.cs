@@ -13,10 +13,11 @@ public class FoodController : MonoBehaviour
 
     // Nouveaux paramètres pour le spawn initial
     public int initialFoodSpawnCount = 5;     // Nombre de nourriture à spawner au début
-    public float spawnAreaSize = 50f;         // Taille de la zone de spawn
+    public float spawnAreaSize = 500f;         // Taille de la zone de spawn
 
     private Population currentPopulation;
     private float foodSpawnTimer = 0f;
+    int maxFoodSwpawn = 8;
 
     public void SetPopulation(Population population)
     {
@@ -31,11 +32,16 @@ public class FoodController : MonoBehaviour
 
     void Update()
     {
+        
         // Faire spawner de la nourriture à intervalles réguliers
         foodSpawnTimer += Time.deltaTime;
         if (foodSpawnTimer >= foodSpawnInterval)
         {
-            SpawnFood();
+
+            for (int i = 0; i < maxFoodSwpawn; i++)
+            {
+                SpawnFood();
+            }
             foodSpawnTimer = 0f;
         }
     }
@@ -50,10 +56,10 @@ public class FoodController : MonoBehaviour
 
     void SpawnFood()
     {
-        // Spawner la nourriture à une position aléatoire dans la scène
+        // Calculer une position aléatoire dans la zone de spawn
         Vector3 spawnPosition = new Vector3(
             Random.Range(-spawnAreaSize / 2, spawnAreaSize / 2),
-            0.5f,
+            2f,
             Random.Range(-spawnAreaSize / 2, spawnAreaSize / 2)
         );
 
@@ -71,7 +77,18 @@ public class FoodController : MonoBehaviour
 
         if (prefabToSpawn != null)
         {
+            // Instancier le prefab à la position de spawn
             GameObject spawnedFood = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+
+            // Réinitialiser l'échelle de l'objet instancié
+            spawnedFood.transform.localScale = new Vector3(20f, 20f, 20f); ;
+
+            // Ajuster la position de l'objet instancié en fonction de son échelle
+            spawnedFood.transform.position = new Vector3(
+                spawnPosition.x*8 ,
+                spawnPosition.y,
+                spawnPosition.z*8
+            );
 
             // Ajouter le composant FoodItem si nécessaire
             FoodItem foodItem = spawnedFood.GetComponent<FoodItem>();

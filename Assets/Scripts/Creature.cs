@@ -13,7 +13,7 @@ public class Creature
     public int genomeLength = 19;
 
     public float pv = 100;
-    public float faim;
+    public float faim = 0f;
 
     private CreatureType _type;
     private Color _color;               // Couleur de la créature
@@ -44,7 +44,6 @@ public class Creature
     {
         genome = new List<int>();
         creatureGenerator = generator;
-        faim = 100f;
 
         // Remplissage du génome avec des valeurs aléatoires (0 ou 1)
         for (int i = 0; i < genomeLength; i++)
@@ -61,6 +60,7 @@ public class Creature
 
         // Ajouter un Collider au modèle
         AddColliderToModel();
+        AddRigidbodyToModel();
     }
 
 
@@ -84,6 +84,7 @@ public class Creature
 
         // Ajouter un Collider au modèle
         AddColliderToModel();
+        AddRigidbodyToModel();
     }
 
     /// <summary>   
@@ -112,18 +113,29 @@ public class Creature
     private void AddColliderToModel()
     {
         // Ajouter un Collider de type CapsuleCollider au modèle
-        CapsuleCollider collider = model.AddComponent<CapsuleCollider>();
+        BoxCollider collider = model.AddComponent<BoxCollider>();
 
         // Ajuster la taille du collider en fonction du facteur d'échelle
         float scaleFactor = ScaleFactor;
-        collider.radius = 0.5f * scaleFactor;
-        collider.height = 2f * scaleFactor;
+        collider.size = new Vector3(4f, 12f, 2f);
+        collider.center = new Vector3 (0, -0.35f, 0); 
 
         // Rendre le collider comme un trigger pour les interactions
-        collider.isTrigger = true;
+        collider.isTrigger = false;
 
         // Stocker la référence du Collider
         creatureCollider = collider;
+    }
+
+    private void AddRigidbodyToModel()
+    {
+        Rigidbody rb = model.AddComponent<Rigidbody>();
+        rb.mass = ScaleFactor; // Adjust mass based on scale
+        rb.drag = 0.5f;
+        rb.angularDrag = 0.5f;
+        rb.useGravity = true;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
 
 

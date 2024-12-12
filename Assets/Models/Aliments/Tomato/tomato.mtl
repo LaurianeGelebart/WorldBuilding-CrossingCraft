@@ -1,0 +1,8 @@
+# Created by Kenney (www.kenney.nl)
+
+newmtl red
+  Kd 0.81 0.09 0.08
+
+newmtl green
+  Kd 0.15 0.71 0.45
+
