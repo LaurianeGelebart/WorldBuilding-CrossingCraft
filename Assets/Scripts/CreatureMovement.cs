@@ -3,12 +3,13 @@ using UnityEngine;
 public class CreatureMovement : MonoBehaviour
 {
     private Creature associatedCreature;
-    public float moveSpeed = 5f;
+    public float moveSpeed;
     private GameObject currentTarget;
 
     public void Initialize(Creature creature)
     {
         associatedCreature = creature;
+        moveSpeed = (creature.Type == CreatureType.Forest) ? 5f : 6f;
     }
 
     void Update()
@@ -35,11 +36,11 @@ public class CreatureMovement : MonoBehaviour
 
     void DisplayHungerBar()
     {
-        // Calculer le nombre de caractères pour la barre de faim
+        // Calculer le nombre de caractï¿½res pour la barre de faim
         int hungerBarLength = 20;
         int filledLength = Mathf.RoundToInt((associatedCreature.faim / 100f) * hungerBarLength);
 
-        // Créer la barre de faim
+        // Crï¿½er la barre de faim
         string hungerBar = "[";
         for (int i = 0; i < hungerBarLength; i++)
         {
@@ -48,12 +49,12 @@ public class CreatureMovement : MonoBehaviour
         hungerBar += "]";
 
         // Afficher dans la console
-        Debug.Log($"Creature Hunger: {hungerBar} {associatedCreature.faim:F1}%");
+        // Debug.Log($"Creature Hunger: {hungerBar} {associatedCreature.faim:F1}%");
     }
 
     void FindNearestFood()
     {
-        // Chercher tous les prefabs dans la scène
+        // Chercher tous les prefabs dans la scï¿½ne
         GameObject[] prefabs = GameObject.FindGameObjectsWithTag("Food");
         float closestDistance = Mathf.Infinity;
 
@@ -103,7 +104,7 @@ public class CreatureMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // Récupérer le composant FoodItem
+        // Rï¿½cupï¿½rer le composant FoodItem
         FoodItem foodItem = other.GetComponent<FoodItem>();
 
         if (foodItem != null)
@@ -112,7 +113,7 @@ public class CreatureMovement : MonoBehaviour
             {
                 // Effet de poison des champignons
                 associatedCreature.faim -= 30f;  // Baisse importante de la faim
-                associatedCreature.pv -= 10f;     // Légère baisse de vie
+                associatedCreature.pv -= 10f;     // Lï¿½gï¿½re baisse de vie
 
             }
             else
@@ -124,7 +125,7 @@ public class CreatureMovement : MonoBehaviour
                 );
             }
 
-            // Détruire la nourriture après consommation
+            // Dï¿½truire la nourriture aprï¿½s consommation
             Destroy(other.gameObject);
         }
     }

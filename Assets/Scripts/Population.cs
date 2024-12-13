@@ -38,6 +38,7 @@ public class Population
             _members[i].UpdatePv();
             CheckIfAlive(_members[i]);
         }
+        _populationSize = _members.Count;
     }
 
     public void Evolve(int generationNumber)
@@ -46,6 +47,7 @@ public class Population
         foreach (Creature newCreature in newGeneration)
         {
             _members.Add(newCreature);
+            Debug.Log("------------Naissance----------------");
         }
         _populationSize = _members.Count;
     }
