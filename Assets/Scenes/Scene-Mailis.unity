@@ -4577,6 +4577,7 @@ GameObject:
   - component: {fileID: 439866230}
   - component: {fileID: 439866229}
   - component: {fileID: 439866228}
+  - component: {fileID: 439866234}
   - component: {fileID: 439866231}
   - component: {fileID: 439866232}
   - component: {fileID: 439866233}
@@ -4667,7 +4668,7 @@ TerrainCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
@@ -4743,6 +4744,28 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: bea18e0d4d2c94644adee9079421e878, type: 2}
   m_BuildHeightMesh: 0
+--- !u!64 &439866234
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 439866225}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &441009593
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15987,26 +16010,6 @@ PrefabInstance:
     - target: {fileID: 7414307790346327534, guid: 5e5807d2072a3a94a9692f351e907afa, type: 3}
       propertyPath: m_Name
       value: tree1 (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Carve
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Shape
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Extents.x
-      value: 0.035
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Extents.z
-      value: 0.014
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_CarveOnlyStationary
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
