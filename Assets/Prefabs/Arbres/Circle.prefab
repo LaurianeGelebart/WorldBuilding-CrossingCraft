@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2963753695271849827}
   - component: {fileID: 7957777909309264494}
   - component: {fileID: 3127782093328471254}
+  - component: {fileID: 4464428877208818293}
   m_Layer: 0
   m_Name: Circle
   m_TagString: Untagged
@@ -105,5 +106,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.07517342, y: 0.06324262, z: 0.09796544}
-  m_Center: {x: 0.0074487748, y: 0.0056051463, z: 0.049107794}
+  m_Size: {x: 0.02, y: 0.025, z: 0.09796544}
+  m_Center: {x: 0, y: 0.005, z: 0.049107794}
+--- !u!208 &4464428877208818293
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6042043212886438849}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.01, y: 0.0125, z: 0.049000002}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.005, z: 0.049000002}
+  m_TimeToStationary: 0.5
