@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 28866495297965327}
   - component: {fileID: 2123206961524830763}
   - component: {fileID: 2276870744043550869}
+  - component: {fileID: 8496337088196788600}
   m_Layer: 0
   m_Name: Cylinder.017
   m_TagString: Untagged
@@ -107,3 +108,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.044795923, y: 0.0440791, z: 0.020857366}
   m_Center: {x: -0.0011136187, y: -0.0006884933, z: 0.000007942764}
+--- !u!208 &8496337088196788600
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6491719455653279517}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.022000002, y: 0.022000002, z: 0.010000001}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.001, y: -0.001, z: 0}
+  m_TimeToStationary: 0.5
