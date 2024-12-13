@@ -22,7 +22,7 @@ public class CreatureGenerator : MonoBehaviour
     public GameObject GenerateModel(Creature creature)
     {
         GameObject creatureModel = new GameObject("CreatureModel");
-        _initialPosition = new Vector3(Random.Range(00, 200), Random.Range(10, 20), Random.Range(0, 200));
+        _initialPosition = new Vector3(Random.Range(-200, 200), Random.Range(10, 20), Random.Range(-200, 200));
         creatureModel.transform.position = _initialPosition;
 
         Vector3 headPosition = CreateBody(creatureModel, creature);

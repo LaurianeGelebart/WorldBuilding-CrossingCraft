@@ -12,7 +12,7 @@ public class Creature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
     public int genomeLength = 19;
 
-    public float pv = 100;
+    public float pv = Random.Range(50f, 200f);
     public float faim = 0f;
 
     private CreatureType _type;
@@ -43,24 +43,13 @@ public class Creature
     public Creature(CreatureGenerator generator)
     {
         genome = new List<int>();
-        creatureGenerator = generator;
-
         // Remplissage du génome avec des valeurs aléatoires (0 ou 1)
         for (int i = 0; i < genomeLength; i++)
         {
             genome.Add(Random.Range(0, 2));
         }
 
-        DecodeGenome();
-        EvaluateFitness();
-        model = creatureGenerator.GenerateModel(this);
-
-        CreatureMovement movementScript = model.AddComponent<CreatureMovement>();
-        movementScript.Initialize(this);
-
-        // Ajouter un Collider au modèle
-        AddColliderToModel();
-        AddRigidbodyToModel();
+        CreatureCommons(generator);
     }
 
 
@@ -73,6 +62,16 @@ public class Creature
     public Creature(List<int> generatedGenome, CreatureGenerator generator)
     {
         genome = generatedGenome;
+        CreatureCommons(generator);        
+    }
+
+
+
+    /// <summary>
+    /// Methodes communes des constructeurs de creatures
+    /// </summary>
+    /// <param name="generator">Référence au générateur de modèles</param>
+    private void CreatureCommons(CreatureGenerator generator){
         creatureGenerator = generator;
 
         DecodeGenome();
@@ -87,12 +86,15 @@ public class Creature
         AddRigidbodyToModel();
     }
 
+
+
     /// <summary>   
     /// Cycle de la vie, descend les pv de la créature en fonction du temps qui passe 
     /// </summary>
     public void UpdatePv()
     {
-        pv -= 1 * Time.deltaTime;
+        pv -= 5f * Time.deltaTime;
+        // Debug.Log("------------------"+pv);
     }
 
     /// <summary>
@@ -104,9 +106,6 @@ public class Creature
         {
             UnityEngine.Object.Destroy(model);
         }
-
-        // Réduire la population ou gérer la disparition de la créature
-
     }
 
 
