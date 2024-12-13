@@ -12,7 +12,7 @@ public class Creature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
     public int genomeLength = 21;
 
-    public float pv = Random.Range(100f, 200f);
+    public float pv;
     public float faim;
 
     private CreatureType _type;
@@ -95,8 +95,7 @@ public class Creature
     /// </summary>
     public void UpdatePv()
     {
-        pv -= 5f * Time.deltaTime;
-        // Debug.Log("------------------"+pv);
+        pv -= 2f * Time.deltaTime;
     }
 
     /// <summary>
@@ -154,6 +153,7 @@ public class Creature
         _typeOfMoustache = DecodeMoustacheType();
         _speed = DecodeSpeed();
         faim = DecodeHunger();
+        pv = DecodePV();
     }
 
     /// <summary>
@@ -420,7 +420,8 @@ public class Creature
     private float DecodePV()
     {
         float pvBits = Utils.BitToInt(genome[15], genome[16]);
-        return (pvBits + 5f) * 0.3f;
+        float mappedValue = Mathf.Lerp(60f, 100f, Mathf.InverseLerp(0, 3, pvBits));
+        return mappedValue;
     }
 
     /// <summary>
@@ -431,7 +432,6 @@ public class Creature
     {
         float hungerBits = Utils.BitToInt(genome[17], genome[18]);
         float mappedValue = Mathf.Lerp(60f, 100f, Mathf.InverseLerp(0, 3, hungerBits));
-        Debug.Log(mappedValue);
         return mappedValue;
     }
 

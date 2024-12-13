@@ -9,7 +9,7 @@ public class CreatureMovement : MonoBehaviour
     public void Initialize(Creature creature)
     {
         associatedCreature = creature;
-        moveSpeed = (creature.Type == CreatureType.Forest) ? 5f : 6f;
+        moveSpeed = creature.Speed;
     }
 
     void Update()
