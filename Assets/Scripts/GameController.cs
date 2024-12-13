@@ -21,10 +21,10 @@ public class GameController : MonoBehaviour
     void Update()
     {
         _creaturesPopulation.Update();
-        // FoodController foodController = FindObjectOfType<FoodController>();
-        // foreach (var creature in _creaturesPopulation.Members)
-        // {
-        //     foodController.UpdateCreatureHunger(creature);
-        // }
+        FoodController foodController = FindObjectOfType<FoodController>();
+        foreach (var creature in _creaturesPopulation.Members)
+        {
+             foodController.UpdateCreatureHunger(creature);
+        }
     }
 }

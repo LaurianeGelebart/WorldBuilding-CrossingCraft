@@ -49,7 +49,7 @@ public class CreatureMovement : MonoBehaviour
         hungerBar += "]";
 
         // Afficher dans la console
-        // Debug.Log($"Creature Hunger: {hungerBar} {associatedCreature.faim:F1}%");
+        Debug.Log($"Creature Hunger: {hungerBar} {associatedCreature.faim:F1}%");
     }
 
     void FindNearestFood()
@@ -104,28 +104,26 @@ public class CreatureMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // R�cup�rer le composant FoodItem
         FoodItem foodItem = other.GetComponent<FoodItem>();
 
         if (foodItem != null)
         {
-            if (foodItem.foodCategory == FoodCategory.Mushroom)
+            if (foodItem.poisonIntensity > 0)
             {
-                // Effet de poison des champignons
-                associatedCreature.faim -= 30f;  // Baisse importante de la faim
-                associatedCreature.pv -= 10f;     // L�g�re baisse de vie
-
+                // Poisonous food
+                associatedCreature.faim -= foodItem.poisonIntensity;
+                associatedCreature.pv -= foodItem.poisonIntensity / 3f;
             }
             else
             {
-                // Nourriture standard
+                // Normal food
                 associatedCreature.faim = Mathf.Min(
                     associatedCreature.faim + foodItem.nutritionalValue,
                     100f
                 );
             }
 
-            // D�truire la nourriture apr�s consommation
+            // Destroy the food after consumption
             Destroy(other.gameObject);
         }
     }
