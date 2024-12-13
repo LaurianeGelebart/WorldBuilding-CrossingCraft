@@ -16,8 +16,8 @@ public class FoodController : MonoBehaviour
     public List<FoodSpawnConfig> foodTypes = new List<FoodSpawnConfig>();
 
     public float foodSpawnInterval = 10f;
-    public int maxFoodSpawn = 8;
-    public float spawnAreaSize = 500f;
+    public int maxFoodSpawn = 80;
+    public float spawnAreaSize = 600f;
     public float hungerDecreaseRate = 1f;
     public int initialFoodSpawnCount = 5;
 
@@ -66,7 +66,7 @@ public class FoodController : MonoBehaviour
 
         // Position de spawn aléatoire
         Vector3 spawnPosition = new Vector3(
-            Random.Range(-spawnAreaSize / 2, spawnAreaSize / 2),
+            Random.Range(-spawnAreaSize * 2, spawnAreaSize / 2),
             2f,
             Random.Range(-spawnAreaSize / 2, spawnAreaSize / 2)
         );

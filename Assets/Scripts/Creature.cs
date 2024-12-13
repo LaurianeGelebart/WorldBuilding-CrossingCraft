@@ -42,11 +42,16 @@ public class Creature
     /// </summary>
     /// <param name="genomeLength">Longueur du génome (en bits)</param>
     /// <param name="generator">Référence au générateur de modèles</param>
-    public Creature(CreatureGenerator generator)
+    public Creature(CreatureGenerator generator, CreatureType type)
     {
         genome = new List<int>();
+        
+        // Premier bit du génome = type 
+        int bitType = (type == CreatureType.Forest) ? 0 : 1;
+        genome.Add(bitType);
+
         // Remplissage du génome avec des valeurs aléatoires (0 ou 1)
-        for (int i = 0; i < genomeLength; i++)
+        for (int i = 1; i < genomeLength; i++)
         {
             genome.Add(Random.Range(0, 2));
         }
@@ -64,7 +69,7 @@ public class Creature
     public Creature(List<int> generatedGenome, CreatureGenerator generator)
     {
         genome = generatedGenome;
-        CreatureCommons(generator);        
+        CreatureCommons(generator);
     }
 
 
@@ -73,7 +78,8 @@ public class Creature
     /// Methodes communes des constructeurs de creatures
     /// </summary>
     /// <param name="generator">Référence au générateur de modèles</param>
-    private void CreatureCommons(CreatureGenerator generator){
+    private void CreatureCommons(CreatureGenerator generator)
+    {
         creatureGenerator = generator;
 
         DecodeGenome();
@@ -118,7 +124,7 @@ public class Creature
         // Ajuster la taille du collider en fonction du facteur d'échelle
         float scaleFactor = ScaleFactor;
         collider.size = new Vector3(4f, 12f, 2f);
-        collider.center = new Vector3 (0, -0.35f, 0); 
+        collider.center = new Vector3(0, -0.35f, 0);
 
         // Rendre le collider comme un trigger pour les interactions
         collider.isTrigger = false;
@@ -442,7 +448,7 @@ public class Creature
     private float DecodeSpeed()
     {
         float speedBits = Utils.BitToInt(genome[19], genome[20]);
-        return (speedBits + 5f)*1.2f;
+        return (speedBits + 5f) * 1.2f;
     }
 
 

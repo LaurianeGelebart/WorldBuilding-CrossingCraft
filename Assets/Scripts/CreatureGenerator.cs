@@ -21,13 +21,17 @@ public class CreatureGenerator : MonoBehaviour
     /// <returns>Le modèle GameObject généré</returns>
     public GameObject GenerateModel(Creature creature)
     {
+        if  (creature.Type == CreatureType.Forest) {
+            _initialPosition = new Vector3(Random.Range(-200, 200), Random.Range(10, 20), Random.Range(-200, 200));
+        } else {
+            _initialPosition = new Vector3(Random.Range(-400, -800), Random.Range(10, 20), Random.Range(-200, 200));
+        }
         GameObject creatureModel = new GameObject("CreatureModel");
-        _initialPosition = new Vector3(Random.Range(-200, 200), Random.Range(10, 20), Random.Range(-200, 200));
         creatureModel.transform.position = _initialPosition;
 
         Vector3 headPosition = CreateBody(creatureModel, creature);
         CreateEyes(headPosition, creatureModel, creature);
-        CreateMoustache(headPosition, creatureModel, creature);
+        // CreateMoustache(headPosition, creatureModel, creature);
         CreateTentacles(creatureModel, creature);
         if (creature.Type == CreatureType.Desert) CreateHorns(headPosition, creatureModel, creature);
 
@@ -209,7 +213,7 @@ public class CreatureGenerator : MonoBehaviour
             0,
             largeSize / 2,
            0);
-        GameObject leftHorn = Instantiate(hornPrefab, leftHornPosition, Quaternion.Euler(-90,90,0));
+        GameObject leftHorn = Instantiate(hornPrefab, leftHornPosition, Quaternion.Euler(-90, 90, 0));
         leftHorn.transform.localScale = new Vector3(size, size, size);
         leftHorn.GetComponent<Renderer>().material.color = creatureColor;
         leftHorn.transform.SetParent(creatureModel.transform);
@@ -219,7 +223,7 @@ public class CreatureGenerator : MonoBehaviour
             0,
             largeSize / 2,
             0);
-        GameObject rightHorn = Instantiate(hornPrefab, rightHornPosition, Quaternion.Euler(-90,-90,0));
+        GameObject rightHorn = Instantiate(hornPrefab, rightHornPosition, Quaternion.Euler(-90, -90, 0));
         rightHorn.transform.localScale = new Vector3(size, size, size);
         rightHorn.GetComponent<Renderer>().material.color = creatureColor;
         rightHorn.transform.SetParent(creatureModel.transform);

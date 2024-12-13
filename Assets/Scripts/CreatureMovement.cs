@@ -49,7 +49,7 @@ public class CreatureMovement : MonoBehaviour
         hungerBar += "]";
 
         // Afficher dans la console
-        Debug.Log($"Creature Hunger: {hungerBar} {associatedCreature.faim:F1}%");
+        // Debug.Log($"Creature Hunger: {hungerBar} {associatedCreature.faim:F1}%");
     }
 
     void FindNearestFood()

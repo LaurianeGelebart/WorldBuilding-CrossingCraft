@@ -3,11 +3,10 @@ using UnityEngine;
 
 public class Population
 {
-    public float mutationRate = 0.01f;        // Taux de mutation
+    public float mutationRate = 0.04f;        // Taux de mutation
     public float selectionThreshold = 0.7f;   // Taux de sélection
 
-    private int _populationMaxSize = 20;           // Taille de la population
-    private int _populationSize;           // Taille de la population
+    private int _populationMaxSize = 50;           // Taille max de la population
     private CreatureGenerator _creatureGenerator; // Référence au générateur de créatures
     private List<Creature> _members;
     private GeneticAlgorithm _geneticAlgorithm;
@@ -20,15 +19,13 @@ public class Population
     public Population(CreatureGenerator creatureGenerator, int populationSize)
     {
         _creatureGenerator = creatureGenerator;
-        _populationSize = populationSize;
-
-        _geneticAlgorithm = new GeneticAlgorithm(populationSize, mutationRate, selectionThreshold, _creatureGenerator);
-        InitializePopulation();
+        _geneticAlgorithm = new GeneticAlgorithm(mutationRate, selectionThreshold, _creatureGenerator);
+        InitializePopulation(populationSize);
     }
 
     public void Update()
     {
-        if (_populationSize < _populationMaxSize)
+        if (_members.Count < _populationMaxSize)
         {
             Evolve(1);
         }
@@ -38,7 +35,6 @@ public class Population
             _members[i].UpdatePv();
             CheckIfAlive(_members[i]);
         }
-        _populationSize = _members.Count;
     }
 
     public void Evolve(int generationNumber)
@@ -49,19 +45,28 @@ public class Population
             _members.Add(newCreature);
             Debug.Log("------------Naissance----------------");
         }
-        _populationSize = _members.Count;
     }
 
-    private void InitializePopulation()
+private void InitializePopulation(int populationSize)
+{
+    _members = new List<Creature>();
+    
+    int baseCount = populationSize / 2;
+    for (int i = 0; i < baseCount; i++)
     {
-        _members = new List<Creature>();
-
-        for (int i = 0; i < _populationSize; i++)
-        {
-            Creature newCreature = new Creature(_creatureGenerator);
-            _members.Add(newCreature);
-        }
+        Creature newForestCreature = new Creature(_creatureGenerator, CreatureType.Forest);
+        Creature newDesertCreature = new Creature(_creatureGenerator, CreatureType.Desert);
+        _members.Add(newForestCreature);
+        _members.Add(newDesertCreature);
     }
+    
+    // Si la population est impair on crée une créature du désert en plus 
+    if (populationSize % 2 != 0)
+    {
+        Creature extraDesertCreature = new Creature(_creatureGenerator, CreatureType.Desert);
+        _members.Add(extraDesertCreature);
+    }
+}
 
     private void CheckIfAlive(Creature creature)
     {
