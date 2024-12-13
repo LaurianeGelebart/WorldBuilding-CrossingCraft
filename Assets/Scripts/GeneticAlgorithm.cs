@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GeneticAlgorithm
 {
-    private int _populationSize;         // Taille de la actualGeneration
     private float _mutationRate;      // Taux de mutation
     private float _selectionThreshold; // Taux de sélection
     private float fitnessImportanceBias = 0.5f; // Biais de sélection
@@ -12,71 +12,66 @@ public class GeneticAlgorithm
     private CreatureGenerator _creatureGenerator;
 
 
-    public GeneticAlgorithm(int populationSize, float mutationRate, float selectionThreshold, CreatureGenerator creatureGenerator)
+    public GeneticAlgorithm(float mutationRate, float selectionThreshold, CreatureGenerator creatureGenerator)
     {
-        _populationSize = populationSize;
         _mutationRate = mutationRate;
         _selectionThreshold = selectionThreshold;
         _creatureGenerator = creatureGenerator;
     }
 
 
-    // Exécute l'évolution de la actualGeneration sur un nombre de générations défini
-    public List<Creature> EvolvePopulation(int generations, List<Creature> actualGeneration)
+    
+  public List<Creature> EvolvePopulation(int generations, List<Creature> actualGeneration)
+{
+    int iteration = 0;
+
+    while (iteration < generations)
     {
-        int iteration = 0;
-        while (iteration < generations)
-        {
-            // Sélectionner les meilleures créatures
-            List<Creature> selectedPopulation = Selection(actualGeneration);
+        // Create a new list to store the population for this iteration
+        List<Creature> newGenerationPopulation = new List<Creature>();
 
-            // Créer la nouvelle génération
-            List<Creature> newPopulation = new List<Creature>();
-            while (newPopulation.Count < _populationSize)
-            {
-                Creature parent1 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
-                Creature parent2 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
+        // Separate selection for Forest and Desert populations
+        List<Creature> selectedForestPopulation = Selection(actualGeneration, CreatureType.Forest);
+        List<Creature> selectedDesertPopulation = Selection(actualGeneration, CreatureType.Desert);
 
-                Creature child = Recombination(parent1, parent2);
+        // Evolve each population separately
+        List<Creature> newForestPopulation = EvolveSpecificPopulation(selectedForestPopulation);
+        List<Creature> newDesertPopulation = EvolveSpecificPopulation(selectedDesertPopulation);
 
-                // Si les parents ne sont pas du même type, on choisi de nouveaux parents
-                while (child == null && selectedPopulation.Count > 1)
-                {
-                    parent2 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
-                    child = Recombination(parent1, parent2);
-                }
-                // Si on n'a toujours pas de child valide
-                if (child == null) continue;
+        // Combine the new populations
+        newGenerationPopulation.AddRange(newForestPopulation);
+        newGenerationPopulation.AddRange(newDesertPopulation);
 
-                Mutate(child);
-                newPopulation.Add(child);
-            }
+        // Update actual generation for next iteration
+        actualGeneration = newGenerationPopulation;
 
-            // Remplacer l'ancienne actualGeneration par la nouvelle
-            actualGeneration = newPopulation;
-
-            iteration++;
-        }
-        return actualGeneration;
+        iteration++;
     }
 
+    return actualGeneration;
+}
+
+
     // Sélectionne les créatures les plus aptes pour la reproduction
-    private List<Creature> Selection(List<Creature> actualGeneration)
+    private List<Creature> Selection(List<Creature> actualGeneration, CreatureType creatureType)
     {
         List<Creature> selectedPopulation = new List<Creature>();
 
-        // Trier la actualGeneration par fitness décroissante
-        actualGeneration.Sort((a, b) => b.fitness.CompareTo(a.fitness));
+         // Filter the population to keep only creatures of the specified type
+        List<Creature> filteredPopulation = actualGeneration.Where(c => c.Type == creatureType).ToList();
 
-        foreach (var creature in actualGeneration)
+        // Trier la filteredPopulation par fitness décroissante
+        filteredPopulation.Sort((a, b) => b.fitness.CompareTo(a.fitness));
+
+        foreach (var creature in filteredPopulation)
         {
             float selectionChance = creature.fitness + Random.Range(0f, 1f) * creature.fitness * 0.1f;
-            if (selectionChance >= (actualGeneration[0].fitness * fitnessImportanceBias))
+            if (selectionChance >= (filteredPopulation[0].fitness * fitnessImportanceBias))
             {
                 selectedPopulation.Add(creature);
             }
 
-            if (selectedPopulation.Count >= (int)(_populationSize * _selectionThreshold))
+            if (selectedPopulation.Count >= (int)(filteredPopulation.Count * _selectionThreshold))
             {
                 break;
             }
@@ -84,6 +79,31 @@ public class GeneticAlgorithm
 
         return selectedPopulation;
     }
+
+    
+    private List<Creature> EvolveSpecificPopulation(List<Creature> selectedPopulation)
+    {
+        List<Creature> newPopulation = new List<Creature>();
+
+        while (newPopulation.Count < selectedPopulation.Count / 2) 
+        {
+            // Select parents randomly from the selected population
+            Creature parent1 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
+            Creature parent2 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
+
+            // Create child through recombination
+            Creature child = Recombination(parent1, parent2);
+
+            // Mutate the child
+            Mutate(child);
+
+            newPopulation.Add(child);
+        }
+
+        return newPopulation;
+    }
+
+
 
     // Crée une nouvelle créature à partir de la recombinaison de deux parents s'ils sont du même type, sinon retourne null 
     private Creature Recombination(Creature parent1, Creature parent2)
