@@ -65,10 +65,6 @@ public class CreatureGenerator : MonoBehaviour
             CreateSphere(smallerPosition, smallerSize, creatureColor, creatureModel);
             CreateSphere(topPosition, topSize, creatureColor, creatureModel);
         }
-        else
-        {
-            // CreateCube(smallerPosition, baseSize, creatureColor, creatureModel);
-        }
 
         return largePosition;  // Retourner la position de la tête pour y placer les yeux
     }

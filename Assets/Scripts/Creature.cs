@@ -10,10 +10,10 @@ public class Creature
     public GameObject model;           // Modèle 3D associé à la créature
     public Collider creatureCollider;  // Collider de la créature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
-    public int genomeLength = 19;
+    public int genomeLength = 21;
 
-    public float pv = Random.Range(50f, 200f);
-    public float faim = 100f;
+    public float pv = Random.Range(100f, 200f);
+    public float faim;
 
     private CreatureType _type;
     private Color _color;               // Couleur de la créature
@@ -23,6 +23,7 @@ public class Creature
     private int _numberOfMoustaches;
     private int _typeOfMoustache;
     private int _typeOfHorns;
+    public float _speed;
 
     public CreatureType Type => _type;
     public Color Color => _color;
@@ -32,6 +33,7 @@ public class Creature
     public int TypeOfMoustache => _typeOfMoustache;
     public int TypeOfHorns => _typeOfHorns;
     public float ScaleFactor => _scaleFactor;
+    public float Speed => _speed;
 
 
     /// <summary>
@@ -150,6 +152,8 @@ public class Creature
         _scaleFactor = DecodeScaleFactor();
         _numberOfMoustaches = DecodeMoustacheNumber();
         _typeOfMoustache = DecodeMoustacheType();
+        _speed = DecodeSpeed();
+        faim = DecodeHunger();
     }
 
     /// <summary>
@@ -165,6 +169,7 @@ public class Creature
         fitness += EvaluateCourbe();
         fitness += EvaluateMoustacheType();
         fitness += EvaluateMoustacheNumber();
+        fitness += EvaluateSpeed();
     }
     /// <summary>
     /// Évalue la couleur de la créature 
@@ -281,6 +286,23 @@ public class Creature
             case (2): return (_type == CreatureType.Forest) ? 2.5f : 2.5f;
             case (1): return (_type == CreatureType.Forest) ? 3.5f : 3.5f;
             case (0): return (_type == CreatureType.Forest) ? 3f : 3f;
+            default: return 0;
+        }
+    }
+
+    /// <summary>
+    /// Évalue le style des moustaches  
+    /// </summary>
+    /// <returns>Score de fitness basé sur le type de moustache</returns>
+    private float EvaluateSpeed()
+    {
+        int speedBits = Utils.BitToInt(genome[19], genome[20]);
+        switch (speedBits)
+        {
+            case (3): return (_type == CreatureType.Forest) ? 2f : 3.5f;
+            case (2): return (_type == CreatureType.Forest) ? 2.5f : 3f;
+            case (1): return (_type == CreatureType.Forest) ? 3.5f : 2.5f;
+            case (0): return (_type == CreatureType.Forest) ? 3.5f : 2f;
             default: return 0;
         }
     }
@@ -408,8 +430,19 @@ public class Creature
     private float DecodeHunger()
     {
         float hungerBits = Utils.BitToInt(genome[17], genome[18]);
-        // float mappedValue = Mathf.Lerp(minOutput, maxOutput, Mathf.InverseLerp(minInput, maxInput, value));
-        return (hungerBits + 5f) * 0.3f;
+        float mappedValue = Mathf.Lerp(60f, 100f, Mathf.InverseLerp(0, 3, hungerBits));
+        Debug.Log(mappedValue);
+        return mappedValue;
+    }
+
+    /// <summary>
+    /// Décode la vitesse de déplacement de la créature à partir des bits du génome
+    /// </summary>
+    /// <returns>_speed de la créature</returns>
+    private float DecodeSpeed()
+    {
+        float speedBits = Utils.BitToInt(genome[19], genome[20]);
+        return (speedBits + 5f)*1.2f;
     }
 
 
