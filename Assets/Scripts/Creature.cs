@@ -13,7 +13,7 @@ public class Creature
     public int genomeLength = 19;
 
     public float pv = Random.Range(50f, 200f);
-    public float faim = 0f;
+    public float faim = 100f;
 
     private CreatureType _type;
     private Color _color;               // Couleur de la créature
