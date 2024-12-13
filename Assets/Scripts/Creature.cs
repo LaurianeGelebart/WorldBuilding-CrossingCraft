@@ -10,9 +10,9 @@ public class Creature
     public GameObject model;           // Modèle 3D associé à la créature
     public Collider creatureCollider;  // Collider de la créature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
-    public int genomeLength = 19;
+    public int genomeLength = 21;
 
-    public float pv = 100;
+    public float pv;
     public float faim;
 
     private CreatureType _type;
@@ -23,6 +23,7 @@ public class Creature
     private int _numberOfMoustaches;
     private int _typeOfMoustache;
     private int _typeOfHorns;
+    public float _speed;
 
     public CreatureType Type => _type;
     public Color Color => _color;
@@ -32,6 +33,7 @@ public class Creature
     public int TypeOfMoustache => _typeOfMoustache;
     public int TypeOfHorns => _typeOfHorns;
     public float ScaleFactor => _scaleFactor;
+    public float Speed => _speed;
 
 
     /// <summary>
@@ -43,24 +45,13 @@ public class Creature
     public Creature(CreatureGenerator generator)
     {
         genome = new List<int>();
-        creatureGenerator = generator;
-        faim = 100f;
-
         // Remplissage du génome avec des valeurs aléatoires (0 ou 1)
         for (int i = 0; i < genomeLength; i++)
         {
             genome.Add(Random.Range(0, 2));
         }
 
-        DecodeGenome();
-        EvaluateFitness();
-        model = creatureGenerator.GenerateModel(this);
-
-        CreatureMovement movementScript = model.AddComponent<CreatureMovement>();
-        movementScript.Initialize(this);
-
-        // Ajouter un Collider au modèle
-        AddColliderToModel();
+        CreatureCommons(generator);
     }
 
 
@@ -73,6 +64,16 @@ public class Creature
     public Creature(List<int> generatedGenome, CreatureGenerator generator)
     {
         genome = generatedGenome;
+        CreatureCommons(generator);        
+    }
+
+
+
+    /// <summary>
+    /// Methodes communes des constructeurs de creatures
+    /// </summary>
+    /// <param name="generator">Référence au générateur de modèles</param>
+    private void CreatureCommons(CreatureGenerator generator){
         creatureGenerator = generator;
 
         DecodeGenome();
@@ -84,14 +85,17 @@ public class Creature
 
         // Ajouter un Collider au modèle
         AddColliderToModel();
+        AddRigidbodyToModel();
     }
+
+
 
     /// <summary>   
     /// Cycle de la vie, descend les pv de la créature en fonction du temps qui passe 
     /// </summary>
     public void UpdatePv()
     {
-        pv -= 1 * Time.deltaTime;
+        pv -= 2f * Time.deltaTime;
     }
 
     /// <summary>
@@ -103,27 +107,35 @@ public class Creature
         {
             UnityEngine.Object.Destroy(model);
         }
-
-        // Réduire la population ou gérer la disparition de la créature
-
     }
 
 
     private void AddColliderToModel()
     {
         // Ajouter un Collider de type CapsuleCollider au modèle
-        CapsuleCollider collider = model.AddComponent<CapsuleCollider>();
+        BoxCollider collider = model.AddComponent<BoxCollider>();
 
         // Ajuster la taille du collider en fonction du facteur d'échelle
         float scaleFactor = ScaleFactor;
-        collider.radius = 0.5f * scaleFactor;
-        collider.height = 2f * scaleFactor;
+        collider.size = new Vector3(4f, 12f, 2f);
+        collider.center = new Vector3 (0, -0.35f, 0); 
 
         // Rendre le collider comme un trigger pour les interactions
-        collider.isTrigger = true;
+        collider.isTrigger = false;
 
         // Stocker la référence du Collider
         creatureCollider = collider;
+    }
+
+    private void AddRigidbodyToModel()
+    {
+        Rigidbody rb = model.AddComponent<Rigidbody>();
+        rb.mass = ScaleFactor; // Adjust mass based on scale
+        rb.drag = 0.5f;
+        rb.angularDrag = 0.5f;
+        rb.useGravity = true;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
 
 
@@ -139,6 +151,9 @@ public class Creature
         _scaleFactor = DecodeScaleFactor();
         _numberOfMoustaches = DecodeMoustacheNumber();
         _typeOfMoustache = DecodeMoustacheType();
+        _speed = DecodeSpeed();
+        faim = DecodeHunger();
+        pv = DecodePV();
     }
 
     /// <summary>
@@ -154,6 +169,7 @@ public class Creature
         fitness += EvaluateCourbe();
         fitness += EvaluateMoustacheType();
         fitness += EvaluateMoustacheNumber();
+        fitness += EvaluateSpeed();
     }
     /// <summary>
     /// Évalue la couleur de la créature 
@@ -275,6 +291,23 @@ public class Creature
     }
 
     /// <summary>
+    /// Évalue le style des moustaches  
+    /// </summary>
+    /// <returns>Score de fitness basé sur le type de moustache</returns>
+    private float EvaluateSpeed()
+    {
+        int speedBits = Utils.BitToInt(genome[19], genome[20]);
+        switch (speedBits)
+        {
+            case (3): return (_type == CreatureType.Forest) ? 2f : 3.5f;
+            case (2): return (_type == CreatureType.Forest) ? 2.5f : 3f;
+            case (1): return (_type == CreatureType.Forest) ? 3.5f : 2.5f;
+            case (0): return (_type == CreatureType.Forest) ? 3.5f : 2f;
+            default: return 0;
+        }
+    }
+
+    /// <summary>
     /// Décode le type de la créature à partir des bits du génome
     /// Type possible CreatureType.Desert CreatureType.Forest 
     /// </summary>
@@ -387,7 +420,8 @@ public class Creature
     private float DecodePV()
     {
         float pvBits = Utils.BitToInt(genome[15], genome[16]);
-        return (pvBits + 5f) * 0.3f;
+        float mappedValue = Mathf.Lerp(60f, 100f, Mathf.InverseLerp(0, 3, pvBits));
+        return mappedValue;
     }
 
     /// <summary>
@@ -397,8 +431,18 @@ public class Creature
     private float DecodeHunger()
     {
         float hungerBits = Utils.BitToInt(genome[17], genome[18]);
-        // float mappedValue = Mathf.Lerp(minOutput, maxOutput, Mathf.InverseLerp(minInput, maxInput, value));
-        return (hungerBits + 5f) * 0.3f;
+        float mappedValue = Mathf.Lerp(60f, 100f, Mathf.InverseLerp(0, 3, hungerBits));
+        return mappedValue;
+    }
+
+    /// <summary>
+    /// Décode la vitesse de déplacement de la créature à partir des bits du génome
+    /// </summary>
+    /// <returns>_speed de la créature</returns>
+    private float DecodeSpeed()
+    {
+        float speedBits = Utils.BitToInt(genome[19], genome[20]);
+        return (speedBits + 5f)*1.2f;
     }
 
 

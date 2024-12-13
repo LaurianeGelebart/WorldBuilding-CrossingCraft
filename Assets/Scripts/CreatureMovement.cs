@@ -3,12 +3,13 @@ using UnityEngine;
 public class CreatureMovement : MonoBehaviour
 {
     private Creature associatedCreature;
-    public float moveSpeed = 2f;
+    public float moveSpeed;
     private GameObject currentTarget;
 
     public void Initialize(Creature creature)
     {
         associatedCreature = creature;
+        moveSpeed = creature.Speed;
     }
 
     void Update()
@@ -35,11 +36,11 @@ public class CreatureMovement : MonoBehaviour
 
     void DisplayHungerBar()
     {
-        // Calculer le nombre de caractères pour la barre de faim
+        // Calculer le nombre de caractï¿½res pour la barre de faim
         int hungerBarLength = 20;
         int filledLength = Mathf.RoundToInt((associatedCreature.faim / 100f) * hungerBarLength);
 
-        // Créer la barre de faim
+        // Crï¿½er la barre de faim
         string hungerBar = "[";
         for (int i = 0; i < hungerBarLength; i++)
         {
@@ -53,7 +54,7 @@ public class CreatureMovement : MonoBehaviour
 
     void FindNearestFood()
     {
-        // Chercher tous les prefabs dans la scène
+        // Chercher tous les prefabs dans la scï¿½ne
         GameObject[] prefabs = GameObject.FindGameObjectsWithTag("Food");
         float closestDistance = Mathf.Infinity;
 
@@ -103,28 +104,26 @@ public class CreatureMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // Récupérer le composant FoodItem
         FoodItem foodItem = other.GetComponent<FoodItem>();
 
         if (foodItem != null)
         {
-            if (foodItem.foodCategory == FoodCategory.Mushroom)
+            if (foodItem.poisonIntensity > 0)
             {
-                // Effet de poison des champignons
-                associatedCreature.faim -= 30f;  // Baisse importante de la faim
-                associatedCreature.pv -= 10f;     // Légère baisse de vie
-
+                // Poisonous food
+                associatedCreature.faim -= foodItem.poisonIntensity;
+                associatedCreature.pv -= foodItem.poisonIntensity / 3f;
             }
             else
             {
-                // Nourriture standard
+                // Normal food
                 associatedCreature.faim = Mathf.Min(
                     associatedCreature.faim + foodItem.nutritionalValue,
                     100f
                 );
             }
 
-            // Détruire la nourriture après consommation
+            // Destroy the food after consumption
             Destroy(other.gameObject);
         }
     }

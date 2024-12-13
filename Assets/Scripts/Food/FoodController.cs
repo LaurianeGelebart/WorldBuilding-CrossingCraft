@@ -1,19 +1,25 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class FoodSpawnConfig
+{
+    public FoodCategory category;
+    public GameObject prefab;
+    public float spawnChance = 0.2f;
+    public float nutritionalValue = 50f;
+    public float poisonIntensity = 0f;
+}
+
 public class FoodController : MonoBehaviour
 {
-    public float hungerDecreaseRate = 1f;     // Vitesse à laquelle la faim diminue
-    public float foodSpawnInterval = 10f;     // Intervalle de réapparition de la nourriture
-    public GameObject standardFoodPrefab;     // Prefab de nourriture standard à faire spawner
-    public GameObject mushroomPrefab;         // Prefab de champignons à faire spawner
-    public float standardFoodSpawnRate = 0.8f;  // 80% de nourriture standard
-    public float mushroomSpawnRate = 0.2f;      // 20% de champignons
+    public List<FoodSpawnConfig> foodTypes = new List<FoodSpawnConfig>();
 
-    // Nouveaux paramètres pour le spawn initial
-    public int initialFoodSpawnCount = 5;     // Nombre de nourriture à spawner au début
-    public float spawnAreaSize = 50f;         // Taille de la zone de spawn
+    public float foodSpawnInterval = 10f;
+    public int maxFoodSpawn = 8;
+    public float spawnAreaSize = 500f;
+    public float hungerDecreaseRate = 1f;
+    public int initialFoodSpawnCount = 5;
 
     private Population currentPopulation;
     private float foodSpawnTimer = 0f;
@@ -25,17 +31,20 @@ public class FoodController : MonoBehaviour
 
     void Start()
     {
-        // Spawner de la nourriture initiale
+        // Spawn initial food
         SpawnInitialFood();
     }
 
     void Update()
     {
-        // Faire spawner de la nourriture à intervalles réguliers
+        // Spawn food at intervals
         foodSpawnTimer += Time.deltaTime;
         if (foodSpawnTimer >= foodSpawnInterval)
         {
-            SpawnFood();
+            for (int i = 0; i < maxFoodSpawn; i++)
+            {
+                SpawnFood();
+            }
             foodSpawnTimer = 0f;
         }
     }
@@ -50,41 +59,36 @@ public class FoodController : MonoBehaviour
 
     void SpawnFood()
     {
-        // Spawner la nourriture à une position aléatoire dans la scène
+        if (foodTypes.Count == 0) return;
+
+        // Sélection aléatoire du type de nourriture
+        FoodSpawnConfig selectedFood = foodTypes[Random.Range(0, foodTypes.Count)];
+
+        // Position de spawn aléatoire
         Vector3 spawnPosition = new Vector3(
             Random.Range(-spawnAreaSize / 2, spawnAreaSize / 2),
-            0.5f,
+            2f,
             Random.Range(-spawnAreaSize / 2, spawnAreaSize / 2)
         );
 
-        // Décider du type de nourriture à spawner
-        float randomValue = Random.value;
-        GameObject prefabToSpawn;
-        if (randomValue < standardFoodSpawnRate)
-        {
-            prefabToSpawn = standardFoodPrefab;
-        }
-        else
-        {
-            prefabToSpawn = mushroomPrefab;
-        }
+        // Instancier la nourriture
+        GameObject spawnedFood = Instantiate(selectedFood.prefab, spawnPosition, Quaternion.identity);
 
-        if (prefabToSpawn != null)
-        {
-            GameObject spawnedFood = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+        // Configurer l'item de nourriture
+        FoodItem foodItem = spawnedFood.GetComponent<FoodItem>() ?? spawnedFood.AddComponent<FoodItem>();
+        foodItem.foodCategory = selectedFood.category;
+        foodItem.nutritionalValue = selectedFood.nutritionalValue;
+        foodItem.poisonIntensity = selectedFood.poisonIntensity;
 
-            // Ajouter le composant FoodItem si nécessaire
-            FoodItem foodItem = spawnedFood.GetComponent<FoodItem>();
-            if (foodItem == null)
-            {
-                foodItem = spawnedFood.AddComponent<FoodItem>();
-            }
+        // Ajuster l'échelle
+        spawnedFood.transform.localScale = new Vector3(20f, 20f, 20f);
 
-            // Définir la catégorie de nourriture
-            foodItem.foodCategory = (prefabToSpawn == mushroomPrefab)
-                ? FoodCategory.Mushroom
-                : FoodCategory.Standard;
-        }
+        // Ajuster la position
+        spawnedFood.transform.position = new Vector3(
+            spawnPosition.x * 8,
+            spawnPosition.y,
+            spawnPosition.z * 8
+        );
     }
 
     public void UpdateCreatureHunger(Creature creature)
