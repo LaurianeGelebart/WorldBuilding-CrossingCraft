@@ -93,7 +93,7 @@ public class CreatureMovement : MonoBehaviour
             // Increase creature's hunger
             if (associatedCreature != null)
             {
-                associatedCreature.faim = Mathf.Min(associatedCreature.faim + 50f, 100f); // Cap at 100
+                associatedCreature.Eat(50f);
             }
 
             // Destroy the food
@@ -111,16 +111,13 @@ public class CreatureMovement : MonoBehaviour
             if (foodItem.poisonIntensity > 0)
             {
                 // Poisonous food
-                associatedCreature.faim -= foodItem.poisonIntensity;
+                associatedCreature.Eat(-foodItem.poisonIntensity);
                 associatedCreature.pv -= foodItem.poisonIntensity / 3f;
             }
             else
             {
                 // Normal food
-                associatedCreature.faim = Mathf.Min(
-                    associatedCreature.faim + foodItem.nutritionalValue,
-                    100f
-                );
+                associatedCreature.Eat(foodItem.nutritionalValue);
             }
 
             // Destroy the food after consumption

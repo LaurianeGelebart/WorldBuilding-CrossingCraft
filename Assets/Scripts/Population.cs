@@ -8,6 +8,7 @@ public class Population
 
     private int _populationMaxSize = 50;           // Taille max de la population
     private CreatureGenerator _creatureGenerator; // Référence au générateur de créatures
+    private SoundController _soundController; // Référence au controller sonore de créatures
     private List<Creature> _members;
     private GeneticAlgorithm _geneticAlgorithm;
 
@@ -16,10 +17,11 @@ public class Population
         get { return _members; }
     }
 
-    public Population(CreatureGenerator creatureGenerator, int populationSize)
+    public Population(CreatureGenerator creatureGenerator, SoundController soundController,int populationSize)
     {
         _creatureGenerator = creatureGenerator;
-        _geneticAlgorithm = new GeneticAlgorithm(mutationRate, selectionThreshold, _creatureGenerator);
+        _soundController = soundController;
+        _geneticAlgorithm = new GeneticAlgorithm(mutationRate, selectionThreshold, _creatureGenerator, _soundController);
         InitializePopulation(populationSize);
     }
 
@@ -54,8 +56,8 @@ private void InitializePopulation(int populationSize)
     int baseCount = populationSize / 2;
     for (int i = 0; i < baseCount; i++)
     {
-        Creature newForestCreature = new Creature(_creatureGenerator, CreatureType.Forest);
-        Creature newDesertCreature = new Creature(_creatureGenerator, CreatureType.Desert);
+        Creature newForestCreature = new Creature(_creatureGenerator, _soundController, CreatureType.Forest);
+        Creature newDesertCreature = new Creature(_creatureGenerator, _soundController, CreatureType.Desert);
         _members.Add(newForestCreature);
         _members.Add(newDesertCreature);
     }
@@ -63,7 +65,7 @@ private void InitializePopulation(int populationSize)
     // Si la population est impair on crée une créature du désert en plus 
     if (populationSize % 2 != 0)
     {
-        Creature extraDesertCreature = new Creature(_creatureGenerator, CreatureType.Desert);
+        Creature extraDesertCreature = new Creature(_creatureGenerator, _soundController, CreatureType.Desert);
         _members.Add(extraDesertCreature);
     }
 }

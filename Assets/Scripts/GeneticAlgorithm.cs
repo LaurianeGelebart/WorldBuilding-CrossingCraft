@@ -7,16 +7,18 @@ public class GeneticAlgorithm
 {
     private float _mutationRate;      // Taux de mutation
     private float _selectionThreshold; // Taux de sélection
-    private float fitnessImportanceBias = 0.5f; // Biais de sélection
+    private float _fitnessImportanceBias = 0.5f; // Biais de sélection
 
     private CreatureGenerator _creatureGenerator;
+    private SoundController _soundController; 
 
 
-    public GeneticAlgorithm(float mutationRate, float selectionThreshold, CreatureGenerator creatureGenerator)
+    public GeneticAlgorithm(float mutationRate, float selectionThreshold, CreatureGenerator creatureGenerator, SoundController soundController)
     {
         _mutationRate = mutationRate;
         _selectionThreshold = selectionThreshold;
         _creatureGenerator = creatureGenerator;
+        _soundController = soundController;
     }
 
 
@@ -66,7 +68,7 @@ public class GeneticAlgorithm
         foreach (var creature in filteredPopulation)
         {
             float selectionChance = creature.fitness + Random.Range(0f, 1f) * creature.fitness * 0.1f;
-            if (selectionChance >= (filteredPopulation[0].fitness * fitnessImportanceBias))
+            if (selectionChance >= (filteredPopulation[0].fitness * _fitnessImportanceBias))
             {
                 selectedPopulation.Add(creature);
             }
@@ -122,7 +124,7 @@ public class GeneticAlgorithm
             genome[i] = (i < crossoverPoint) ? parent1.genome[i] : parent2.genome[i];
         }
 
-        return new Creature(genome, _creatureGenerator);
+        return new Creature(genome, _creatureGenerator, _soundController);
     }
 
     // Applique une mutation sur le génome d'une créature selon le taux de mutation
