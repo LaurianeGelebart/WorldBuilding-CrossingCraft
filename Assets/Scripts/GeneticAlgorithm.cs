@@ -7,49 +7,51 @@ public class GeneticAlgorithm
 {
     private float _mutationRate;      // Taux de mutation
     private float _selectionThreshold; // Taux de sélection
-    private float fitnessImportanceBias = 0.5f; // Biais de sélection
+    private float _fitnessImportanceBias = 0.5f; // Biais de sélection
 
     private CreatureGenerator _creatureGenerator;
+    private SoundController _soundController;
 
 
-    public GeneticAlgorithm(float mutationRate, float selectionThreshold, CreatureGenerator creatureGenerator)
+    public GeneticAlgorithm(float mutationRate, float selectionThreshold, CreatureGenerator creatureGenerator, SoundController soundController)
     {
         _mutationRate = mutationRate;
         _selectionThreshold = selectionThreshold;
         _creatureGenerator = creatureGenerator;
+        _soundController = soundController;
     }
 
 
-    
-  public List<Creature> EvolvePopulation(int generations, List<Creature> actualGeneration)
-{
-    int iteration = 0;
 
-    while (iteration < generations)
+    public List<Creature> EvolvePopulation(int generations, List<Creature> actualGeneration)
     {
-        // Create a new list to store the population for this iteration
-        List<Creature> newGenerationPopulation = new List<Creature>();
+        int iteration = 0;
 
-        // Separate selection for Forest and Desert populations
-        List<Creature> selectedForestPopulation = Selection(actualGeneration, CreatureType.Forest);
-        List<Creature> selectedDesertPopulation = Selection(actualGeneration, CreatureType.Desert);
+        while (iteration < generations)
+        {
+            // Create a new list to store the population for this iteration
+            List<Creature> newGenerationPopulation = new List<Creature>();
 
-        // Evolve each population separately
-        List<Creature> newForestPopulation = EvolveSpecificPopulation(selectedForestPopulation);
-        List<Creature> newDesertPopulation = EvolveSpecificPopulation(selectedDesertPopulation);
+            // Separate selection for Forest and Desert populations
+            List<Creature> selectedForestPopulation = Selection(actualGeneration, CreatureType.Forest);
+            List<Creature> selectedDesertPopulation = Selection(actualGeneration, CreatureType.Desert);
 
-        // Combine the new populations
-        newGenerationPopulation.AddRange(newForestPopulation);
-        newGenerationPopulation.AddRange(newDesertPopulation);
+            // Evolve each population separately
+            List<Creature> newForestPopulation = EvolveSpecificPopulation(selectedForestPopulation);
+            List<Creature> newDesertPopulation = EvolveSpecificPopulation(selectedDesertPopulation);
 
-        // Update actual generation for next iteration
-        actualGeneration = newGenerationPopulation;
+            // Combine the new populations
+            newGenerationPopulation.AddRange(newForestPopulation);
+            newGenerationPopulation.AddRange(newDesertPopulation);
 
-        iteration++;
+            // Update actual generation for next iteration
+            actualGeneration = newGenerationPopulation;
+
+            iteration++;
+        }
+
+        return actualGeneration;
     }
-
-    return actualGeneration;
-}
 
 
     // Sélectionne les créatures les plus aptes pour la reproduction
@@ -57,7 +59,7 @@ public class GeneticAlgorithm
     {
         List<Creature> selectedPopulation = new List<Creature>();
 
-         // Filter the population to keep only creatures of the specified type
+        // Filter the population to keep only creatures of the specified type
         List<Creature> filteredPopulation = actualGeneration.Where(c => c.Type == creatureType).ToList();
 
         // Trier la filteredPopulation par fitness décroissante
@@ -66,7 +68,7 @@ public class GeneticAlgorithm
         foreach (var creature in filteredPopulation)
         {
             float selectionChance = creature.fitness + Random.Range(0f, 1f) * creature.fitness * 0.1f;
-            if (selectionChance >= (filteredPopulation[0].fitness * fitnessImportanceBias))
+            if (selectionChance >= (filteredPopulation[0].fitness * _fitnessImportanceBias))
             {
                 selectedPopulation.Add(creature);
             }
@@ -80,12 +82,12 @@ public class GeneticAlgorithm
         return selectedPopulation;
     }
 
-    
+
     private List<Creature> EvolveSpecificPopulation(List<Creature> selectedPopulation)
     {
         List<Creature> newPopulation = new List<Creature>();
 
-        while (newPopulation.Count < selectedPopulation.Count / 2) 
+        while (newPopulation.Count < selectedPopulation.Count / 2)
         {
             // Select parents randomly from the selected population
             Creature parent1 = selectedPopulation[Random.Range(0, selectedPopulation.Count)];
@@ -122,7 +124,7 @@ public class GeneticAlgorithm
             genome[i] = (i < crossoverPoint) ? parent1.genome[i] : parent2.genome[i];
         }
 
-        return new Creature(genome, _creatureGenerator);
+        return new Creature(genome, _creatureGenerator, _soundController);
     }
 
     // Applique une mutation sur le génome d'une créature selon le taux de mutation

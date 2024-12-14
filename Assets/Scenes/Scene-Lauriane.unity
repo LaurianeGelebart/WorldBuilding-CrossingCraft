@@ -2648,6 +2648,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b78db91f627c154eaf119dd3b0876ca, type: 3}
+--- !u!1 &203960890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 203960892}
+  - component: {fileID: 203960891}
+  m_Layer: 0
+  m_Name: SoundController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &203960891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203960890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2110538ec058ee44383ebe506ddecdf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bornSound: {fileID: 8300000, guid: d4d218aad34106444afcb279130832d1, type: 3}
+  eatingSound: {fileID: 8300000, guid: 8ba6c2e64a116714fa583c6443874395, type: 3}
+  deathSound: {fileID: 8300000, guid: 39c1426a71ef0c34e9722a1d88ad5d4f, type: 3}
+--- !u!4 &203960892
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203960890}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -646.0142, y: -7.749595, z: -5.570335}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &204066342 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4382597204858302243, guid: ff084e0a4b127a347b87f2aeffaef96a, type: 3}
@@ -15947,7 +15994,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   creatureGenerator: {fileID: 1035346042}
+  soundController: {fileID: 203960891}
   foodController: {fileID: 1533384412}
+  beginningCreatureNumber: 30
 --- !u!4 &1392202490
 Transform:
   m_ObjectHideFlags: 0
