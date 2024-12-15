@@ -7,14 +7,41 @@ public class CameraController : MonoBehaviour
 
     private float _rotationX;
     private float _rotationY;
+
+    private bool _cameraEnabled = true;
     public float sensitivity = 5f;
     public float moveSpeed = 12f;
+
+    private Rigidbody rb;
+
+
+    void Start(){
+        rb = GetComponent<Rigidbody>();
+
+        //Block the cursor in the screen
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
     // Update is called once per frame
     void Update()
     {
+        //Lock/unlock camera movements on left click
+        if(Input.GetMouseButtonDown(0)){
+            _cameraEnabled = !_cameraEnabled;
+            Cursor.visible = !Cursor.visible;
+            Cursor.lockState = _cameraEnabled ? CursorLockMode.Locked : CursorLockMode.None;
+        }    
+
+        if (_cameraEnabled) {
+            HandleMovement();
+        } else {
+            rb.velocity= Vector3.zero;
+        }
+    }
+
+    private void HandleMovement(){
         // //Make the camera follow the movement of my mouse
-        //if(!IsMouseOffScreen()){
         _rotationX -=Input.GetAxis("Mouse Y")*sensitivity;
         _rotationY +=Input.GetAxis("Mouse X") *sensitivity;
 
@@ -24,30 +51,17 @@ public class CameraController : MonoBehaviour
         transform.rotation = Quaternion.Euler(_rotationX,_rotationY,0);
         //}
 
-
+        
         // //Camera movement
         Vector3 moveDirection = Vector3.zero;
         
         // Forward/Backward movement (Z/S keys)
-        moveDirection += transform.forward * Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
+        moveDirection += transform.forward * Input.GetAxis("Vertical") * moveSpeed;
 
         // Left/Right movement (Q/D keys)
-        moveDirection += transform.right * Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
+        moveDirection += transform.right * Input.GetAxis("Horizontal") * moveSpeed;
 
         // Apply movement
-        transform.position += moveDirection;
+        rb.velocity = moveDirection;
     }
-
-    // //Uncomment if you want the camera to stop following the movement of your mouse once the cursor is out the game screen
-    // private bool IsMouseOffScreen()
-    // {
-    //     if(Input.mousePosition.x <= 2 || 
-    //     Input.mousePosition.y <= 2 || 
-    //     Input.mousePosition.x >= Screen.width-2 ||
-    //     Input.mousePosition.y >= Screen.height -2){
-    //         return true;
-    //     }else{
-    //         return false;
-    //     }
-    // }
 }
