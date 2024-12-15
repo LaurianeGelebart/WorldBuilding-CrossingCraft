@@ -11,25 +11,12 @@ public class WaveFunctionCollapse
     public Vector3Int min, max;
     public Func<Vector3Int, WFCTile, float> weightCallback = (pos, tile) => 1;
 
-    readonly Dictionary<Vector3Int, WFCCell> cells = new();
+    private WFCCell[,,] cellGrid;
     public bool updated = false;
-
-    public Dictionary<Vector3Int, WFCCell> Cells { get { return cells; } }
-    public Dictionary<Vector3Int, WFCTile> Result { get { return cells.ToDictionary(cell => cell.Key, cell => cell.Value.Tile); } }
 
     public WFCCell GetAt(Vector3Int pos)
     {
-        if (!IsInRange(pos)) return null;
-        if (!cells.ContainsKey(pos))
-        {
-            cells[pos] = new WFCCell
-            {
-                tiles = new(tileset),
-                possibleTiles = new(tileset),
-            };
-        }
-        updated = true;
-        return cells[pos];
+        return cellGrid[pos.x - min.x, pos.y - min.y, pos.z - min.z];
     }
     public void SetAt(Vector3Int pos, WFCTile tile)
     {
@@ -53,17 +40,6 @@ public class WaveFunctionCollapse
     }
     public void Clear()
     {
-        cells.Clear();
-        updated = true;
-    }
-
-    public void Initialize()
-    {
-        Clear();
-        foreach (var tile in tileset)
-        {
-            tile.FetchValidNeighbors(tileset);
-        }
         for (int x = min.x; x <= max.x; x++)
         {
             for (int y = min.y; y <= max.y; y++)
@@ -71,10 +47,26 @@ public class WaveFunctionCollapse
                 for (int z = min.z; z <= max.z; z++)
                 {
                     var pos = new Vector3Int(x, y, z);
-                    var cell = GetAt(pos);
+                    cellGrid[pos.x - min.x, pos.y - min.y, pos.z - min.z] = new WFCCell(tileset);
                 }
             }
         }
+        updated = true;
+    }
+    public WFCTile GetTileAt(Vector3Int pos)
+    {
+        var cell = GetAt(pos);
+        if (!cell.Collapsed) return null;
+        return cell.Tile;
+    }
+
+    public void Initialize()
+    {
+        foreach (var tile in tileset)
+        {
+            tile.FetchValidNeighbors(tileset);
+        }
+        cellGrid = new WFCCell[max.x - min.x + 1, max.y - min.y + 1, max.z - min.z + 1];
     }
 
     public void DoTheThing()
@@ -87,10 +79,18 @@ public class WaveFunctionCollapse
 
     public bool IsCollapsed()
     {
-        foreach (var cell in cells)
+        for (int x = min.x; x <= max.x; x++)
         {
-            if (!cell.Value.Collapsed) return false;
-            if (cell.Value.Entropy == 0) throw new System.Exception($"No possible tiles at {cell.Key}");
+            for (int y = min.y; y <= max.y; y++)
+            {
+                for (int z = min.z; z <= max.z; z++)
+                {
+                    var pos = new Vector3Int(x, y, z);
+                    var cell = GetAt(pos);
+                    if (!cell.Collapsed) return false;
+                    if (cell.Entropy == 0) throw new System.Exception($"No possible tiles at {pos}");
+                }
+            }
         }
         return true;
     }
@@ -106,30 +106,43 @@ public class WaveFunctionCollapse
     {
         int minEntropy = int.MaxValue;
         List<Vector3Int> possiblePositions = new();
-        foreach (var cell in cells)
+        for (int x = min.x; x <= max.x; x++)
         {
-            if (cell.Value.Collapsed) continue;
-            if (cell.Value.Entropy == 0)
+            for (int y = min.y; y <= max.y; y++)
             {
-                throw new System.Exception($"No possible tiles at {cell.Key}");
-            }
-            if (cell.Value.Entropy < minEntropy)
-            {
-                minEntropy = cell.Value.Entropy;
-                possiblePositions = new() { cell.Key };
-            }
-            else if (cell.Value.Entropy == minEntropy)
-            {
-                possiblePositions.Add(cell.Key);
+                for (int z = min.z; z <= max.z; z++)
+                {
+                    var pos = new Vector3Int(x, y, z);
+                    MinimumEntropyAt(pos, ref minEntropy, ref possiblePositions);
+                }
             }
         }
         int index = UnityEngine.Random.Range(0, possiblePositions.Count);
         return possiblePositions[index];
     }
 
+    public void MinimumEntropyAt(Vector3Int position, ref int minEntropy, ref List<Vector3Int> possiblePositions)
+    {
+        var cell = GetAt(position);
+        if (cell.Collapsed) return;
+        if (cell.Entropy == 0)
+        {
+            throw new System.Exception($"No possible tiles at {position}");
+        }
+        if (cell.Entropy < minEntropy)
+        {
+            minEntropy = cell.Entropy;
+            possiblePositions = new() { position };
+        }
+        else if (cell.Entropy == minEntropy)
+        {
+            possiblePositions.Add(position);
+        }
+    }
+
     public int GetRandomIndexFromWeight(Vector3Int pos)
     {
-        WFCCell cell = cells[pos];
+        WFCCell cell = GetAt(pos);
         if (cell.Collapsed) return 0;
         if (cell.Entropy == 0)
             throw new System.Exception($"No possible tiles at Vector3{pos}");
@@ -155,7 +168,8 @@ public class WaveFunctionCollapse
     public void CollapseAt(Vector3Int pos)
     {
         int index = GetRandomIndexFromWeight(pos);
-        cells[pos].CollapseTo(cells[pos].possibleTiles[index]);
+        var cell = GetAt(pos);
+        cell.CollapseTo(cell.possibleTiles[index]);
         updated = true;
     }
 
@@ -274,6 +288,17 @@ public class WFCCell
     public int Entropy { get { return possibleTiles.Count; } }
     public bool Collapsed { get { return Entropy == 1; } }
     public WFCTile Tile { get { return Collapsed ? possibleTiles[0] : null; } }
+
+    public WFCCell(List<WFCTile> tiles)
+    {
+        this.tiles = new(tiles);
+        possibleTiles = new(tiles);
+    }
+
+    public void Reset()
+    {
+        possibleTiles = new(tiles);
+    }
 
     public void CollapseTo(WFCTile tile)
     {
@@ -483,7 +508,6 @@ public class GeneralWFCTile
     public GameObject prefab;
     public WFCSockets sockets;
     public bool rotates;
-    // public Flip flip;
     public bool flip;
     public string yPosFlipped;
     public string yNegFlipped;
