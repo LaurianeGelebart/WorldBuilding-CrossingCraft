@@ -25,8 +25,11 @@ class TileName
 public class TestWFC : MonoBehaviour
 {
     public Vector3Int min, max;
+    public Vector3 tileSize = new(2, 2, 2);
 
     public TextMeshProUGUI stateText;
+
+    public bool renderIterations = false;
 
     public List<GeneralWFCTile> tileset;
     readonly WaveFunctionCollapse wfc = new();
@@ -55,7 +58,7 @@ public class TestWFC : MonoBehaviour
             else if (tile.Name == TileName.Wall)
                 return 0;
             else if (tile.sockets.IsAll("-1")) // external void (air)
-                return 2;
+                return 3;
             return 1;
         };
 
@@ -66,8 +69,10 @@ public class TestWFC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RenderWFC();
         if (halted) return;
+
+        if (renderIterations)
+            RenderWFC();
 
         timer += Time.deltaTime;
         Iterate();
@@ -75,6 +80,7 @@ public class TestWFC : MonoBehaviour
         {
             stateText.text = "Collapsed in " + timer + " seconds";
             halted = true;
+            RenderWFC();
         }
     }
 
@@ -137,11 +143,14 @@ public class TestWFC : MonoBehaviour
                     var tile = wfc.GetTileAt(pos);
                     if (tile == null || tile.prefab == null) continue;
                     var go = tile.ToGameObject(transform);
-                    go.transform.localPosition = pos * 2;
+                    go.transform.localPosition = new(
+                        x * tileSize.x,
+                        y * tileSize.y,
+                        z * tileSize.z
+                    );
                 }
             }
         }
         wfc.updated = false;
-
     }
 }
