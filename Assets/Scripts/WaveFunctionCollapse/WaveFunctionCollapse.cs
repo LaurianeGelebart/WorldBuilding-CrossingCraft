@@ -175,43 +175,48 @@ public class WaveFunctionCollapse
 
     public void Propagate(Vector3Int pos)
     {
-        Stack<Vector3Int> stack = new();
-        Stack<Vector3Int> stackTmp = new();
-        bool crash = false;
-        stack.Push(pos);
+        Queue<Vector3Int> queue = new();
+        HashSet<Vector3Int> inQueue = new();
+        queue.Enqueue(pos);
+        inQueue.Add(pos);
 
         int iterationCount = 0;
 
-        while (stack.Count > 0)
+        while (queue.Count > 0)
         {
-            if (crash || iterationCount++ > 100000)
-            {
-                throw new Exception($"Infinite loop detected with stack size of {stack.Count} at Vector3{pos}");
-            }
-            PropagateStep(stack);
+            if (iterationCount++ > 100000)
+                throw new Exception($"Infinite loop detected with queue size of {queue.Count} at Vector3{pos}");
+            PropagateStep(ref queue, ref inQueue);
         }
     }
-    public void PropagateStep(Stack<Vector3Int> stack)
+    public void PropagateStep(ref Queue<Vector3Int> queue, ref HashSet<Vector3Int> inQueue)
     {
-        Vector3Int currentPos = stack.Pop();
+        Vector3Int currentPos = queue.Dequeue();
+        inQueue.Remove(currentPos);
+
         foreach (var dir in ValidDirs(currentPos))
         {
             Vector3Int neighborPos = currentPos + dir;
             List<WFCTile> neighborPossibleTiles = new(GetAt(neighborPos).possibleTiles);
-
             List<WFCTile> possibleNeighbors = PossibleNeighbors(currentPos, dir);
 
             if (neighborPossibleTiles.Count == 0)
                 continue;
 
+            bool changed = false;
             foreach (var neighborTile in neighborPossibleTiles)
             {
                 if (!possibleNeighbors.Contains(neighborTile))
                 {
                     Constrain(neighborPos, neighborTile);
-                    if (!stack.Contains(neighborPos))
-                        stack.Push(neighborPos);
+                    changed = true;
                 }
+            }
+
+            if (changed && !inQueue.Contains(neighborPos))
+            {
+                queue.Enqueue(neighborPos);
+                inQueue.Add(neighborPos);
             }
         }
     }
