@@ -57,6 +57,7 @@ public class TestWFC : MonoBehaviour
             return 1;
         };
 
+        wfc.Initialize();
         Reinitialize();
     }
 
@@ -99,7 +100,7 @@ public class TestWFC : MonoBehaviour
 
     public void Reinitialize()
     {
-        wfc.Initialize();
+        wfc.Clear();
         for (int x = wfc.min.x; x <= wfc.max.x; x++)
         {
             for (int z = wfc.min.z; z <= wfc.max.z; z++)
@@ -127,11 +128,19 @@ public class TestWFC : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (var (pos, tile) in wfc.Result)
+        for (int x = wfc.min.x; x <= wfc.max.x; x++)
         {
-            if (tile == null || tile.prefab == null) continue;
-            var go = tile.ToGameObject(transform);
-            go.transform.localPosition = pos * 2;
+            for (int y = wfc.min.y; y <= wfc.max.y; y++)
+            {
+                for (int z = wfc.min.z; z <= wfc.max.z; z++)
+                {
+                    var pos = new Vector3Int(x, y, z);
+                    var tile = wfc.GetTileAt(pos);
+                    if (tile == null || tile.prefab == null) continue;
+                    var go = tile.ToGameObject(transform);
+                    go.transform.localPosition = pos * 2;
+                }
+            }
         }
         wfc.updated = false;
 
