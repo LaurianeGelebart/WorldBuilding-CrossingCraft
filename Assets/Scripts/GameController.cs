@@ -13,7 +13,7 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        _creaturesPopulation = new Population(creatureGenerator, 10);
+        _creaturesPopulation = new Population(creatureGenerator, 30);
         _creaturesPopulation.Evolve(1);
         foodController.SetPopulation(_creaturesPopulation);  // Passer la référence de Population
     }

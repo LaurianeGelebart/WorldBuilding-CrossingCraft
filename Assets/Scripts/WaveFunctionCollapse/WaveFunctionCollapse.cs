@@ -9,44 +9,37 @@ public class WaveFunctionCollapse
 {
     public List<WFCTile> tileset;
     public Vector3Int min, max;
-    public WFCSockets borderSockets;
     public Func<Vector3Int, WFCTile, float> weightCallback = (pos, tile) => 1;
 
-    readonly Dictionary<Vector3Int, WFCCell> cells = new();
-
-    public Dictionary<Vector3Int, WFCCell> Cells { get { return cells; } }
-    public Dictionary<Vector3Int, WFCTile> Result { get { return cells.ToDictionary(cell => cell.Key, cell => cell.Value.Tile); } }
+    private WFCCell[,,] cellGrid;
+    public bool updated = false;
 
     public WFCCell GetAt(Vector3Int pos)
     {
-        if (!IsInRange(pos)) return null;
-        if (!cells.ContainsKey(pos))
-        {
-            cells[pos] = new WFCCell
-            {
-                tiles = new(tileset),
-                possibleTiles = new(tileset),
-            };
-        }
-        return cells[pos];
+        return cellGrid[pos.x - min.x, pos.y - min.y, pos.z - min.z];
     }
     public void SetAt(Vector3Int pos, WFCTile tile)
     {
         GetAt(pos).CollapseTo(tile);
         Propagate(pos);
+        updated = true;
+    }
+    public void Constrain(Vector3Int pos, WFCTile tile)
+    {
+        WFCCell cell = GetAt(pos);
+        if (cell == null) return;
+        if (cell.Collapsed)
+        {
+            throw new Exception($"Attempted to constrain a collapsed cell at Vector3{pos}");
+        }
+        if (!cell.possibleTiles.Remove(tile))
+        {
+            throw new Exception($"Failed to constrain to {tile} at Vector3{pos}");
+        }
+        updated = true;
     }
     public void Clear()
     {
-        cells.Clear();
-    }
-
-    public void Initialize()
-    {
-        Clear();
-        foreach (var tile in tileset)
-        {
-            tile.FetchValidNeighbors(tileset);
-        }
         for (int x = min.x; x <= max.x; x++)
         {
             for (int y = min.y; y <= max.y; y++)
@@ -54,10 +47,26 @@ public class WaveFunctionCollapse
                 for (int z = min.z; z <= max.z; z++)
                 {
                     var pos = new Vector3Int(x, y, z);
-                    var cell = GetAt(pos);
+                    cellGrid[pos.x - min.x, pos.y - min.y, pos.z - min.z] = new WFCCell(tileset);
                 }
             }
         }
+        updated = true;
+    }
+    public WFCTile GetTileAt(Vector3Int pos)
+    {
+        var cell = GetAt(pos);
+        if (!cell.Collapsed) return null;
+        return cell.Tile;
+    }
+
+    public void Initialize()
+    {
+        foreach (var tile in tileset)
+        {
+            tile.FetchValidNeighbors(tileset);
+        }
+        cellGrid = new WFCCell[max.x - min.x + 1, max.y - min.y + 1, max.z - min.z + 1];
     }
 
     public void DoTheThing()
@@ -70,10 +79,18 @@ public class WaveFunctionCollapse
 
     public bool IsCollapsed()
     {
-        foreach (var cell in cells)
+        for (int x = min.x; x <= max.x; x++)
         {
-            if (!cell.Value.Collapsed) return false;
-            if (cell.Value.Entropy == 0) throw new System.Exception($"No possible tiles at {cell.Key}");
+            for (int y = min.y; y <= max.y; y++)
+            {
+                for (int z = min.z; z <= max.z; z++)
+                {
+                    var pos = new Vector3Int(x, y, z);
+                    var cell = GetAt(pos);
+                    if (!cell.Collapsed) return false;
+                    if (cell.Entropy == 0) throw new System.Exception($"No possible tiles at {pos}");
+                }
+            }
         }
         return true;
     }
@@ -89,32 +106,46 @@ public class WaveFunctionCollapse
     {
         int minEntropy = int.MaxValue;
         List<Vector3Int> possiblePositions = new();
-        foreach (var cell in cells)
+        for (int x = min.x; x <= max.x; x++)
         {
-            if (cell.Value.Collapsed) continue;
-            if (cell.Value.Entropy == 0)
+            for (int y = min.y; y <= max.y; y++)
             {
-                throw new System.Exception($"No possible tiles at {cell.Key}");
-            }
-            if (cell.Value.Entropy < minEntropy)
-            {
-                minEntropy = cell.Value.Entropy;
-                possiblePositions = new() { cell.Key };
-            }
-            else if (cell.Value.Entropy == minEntropy)
-            {
-                possiblePositions.Add(cell.Key);
+                for (int z = min.z; z <= max.z; z++)
+                {
+                    var pos = new Vector3Int(x, y, z);
+                    MinimumEntropyAt(pos, ref minEntropy, ref possiblePositions);
+                }
             }
         }
-        return possiblePositions[UnityEngine.Random.Range(0, possiblePositions.Count)];
+        int index = UnityEngine.Random.Range(0, possiblePositions.Count);
+        return possiblePositions[index];
+    }
+
+    public void MinimumEntropyAt(Vector3Int position, ref int minEntropy, ref List<Vector3Int> possiblePositions)
+    {
+        var cell = GetAt(position);
+        if (cell.Collapsed) return;
+        if (cell.Entropy == 0)
+        {
+            throw new System.Exception($"No possible tiles at {position}");
+        }
+        if (cell.Entropy < minEntropy)
+        {
+            minEntropy = cell.Entropy;
+            possiblePositions = new() { position };
+        }
+        else if (cell.Entropy == minEntropy)
+        {
+            possiblePositions.Add(position);
+        }
     }
 
     public int GetRandomIndexFromWeight(Vector3Int pos)
     {
-        WFCCell cell = cells[pos];
+        WFCCell cell = GetAt(pos);
         if (cell.Collapsed) return 0;
         if (cell.Entropy == 0)
-            throw new System.Exception($"No possible tiles at {pos}");
+            throw new System.Exception($"No possible tiles at Vector3{pos}");
 
         float[] weights = new float[cell.possibleTiles.Count];
         for (int i = 0; i < cell.possibleTiles.Count; i++)
@@ -136,46 +167,56 @@ public class WaveFunctionCollapse
 
     public void CollapseAt(Vector3Int pos)
     {
-        // WFCCell cell = cells[pos];
-        // if (cell.Collapsed) return;
-        // if (cell.Entropy == 0)
-        // {
-        //     throw new System.Exception($"No possible tiles at {pos}");
-        // }
-        // int index = UnityEngine.Random.Range(0, cell.possibleTiles.Count);
-        // cell.CollapseTo(cell.possibleTiles[index]);
         int index = GetRandomIndexFromWeight(pos);
-        cells[pos].CollapseTo(cells[pos].possibleTiles[index]);
+        var cell = GetAt(pos);
+        cell.CollapseTo(cell.possibleTiles[index]);
+        updated = true;
     }
 
-    // Something is wrong; it ends up with an enthropy of 0, which should not happen
     public void Propagate(Vector3Int pos)
     {
-        Stack<Vector3Int> stack = new();
-        stack.Push(pos);
+        Queue<Vector3Int> queue = new();
+        HashSet<Vector3Int> inQueue = new();
+        queue.Enqueue(pos);
+        inQueue.Add(pos);
 
-        while (stack.Count > 0)
+        int iterationCount = 0;
+
+        while (queue.Count > 0)
         {
-            Vector3Int currentPos = stack.Pop();
-            foreach (var dir in ValidDirs(currentPos))
+            if (iterationCount++ > 100000)
+                throw new Exception($"Infinite loop detected with queue size of {queue.Count} at Vector3{pos}");
+            PropagateStep(ref queue, ref inQueue);
+        }
+    }
+    public void PropagateStep(ref Queue<Vector3Int> queue, ref HashSet<Vector3Int> inQueue)
+    {
+        Vector3Int currentPos = queue.Dequeue();
+        inQueue.Remove(currentPos);
+
+        foreach (var dir in ValidDirs(currentPos))
+        {
+            Vector3Int neighborPos = currentPos + dir;
+            List<WFCTile> neighborPossibleTiles = new(GetAt(neighborPos).possibleTiles);
+            List<WFCTile> possibleNeighbors = PossibleNeighbors(currentPos, dir);
+
+            if (neighborPossibleTiles.Count == 0)
+                continue;
+
+            bool changed = false;
+            foreach (var neighborTile in neighborPossibleTiles)
             {
-                Vector3Int neighborPos = currentPos + dir;
-                List<WFCTile> neighborPossibleTiles = new(GetAt(neighborPos).possibleTiles);
-
-                List<WFCTile> possibleNeighbors = PossibleNeighbors(currentPos, dir);
-
-                if (neighborPossibleTiles.Count == 0)
-                    continue;
-
-                foreach (var neighborTile in neighborPossibleTiles)
+                if (!possibleNeighbors.Contains(neighborTile))
                 {
-                    if (!possibleNeighbors.Contains(neighborTile))
-                    {
-                        Constrain(neighborPos, neighborTile);
-                        if (!stack.Contains(neighborPos))
-                            stack.Push(neighborPos);
-                    }
+                    Constrain(neighborPos, neighborTile);
+                    changed = true;
                 }
+            }
+
+            if (changed && !inQueue.Contains(neighborPos))
+            {
+                queue.Enqueue(neighborPos);
+                inQueue.Add(neighborPos);
             }
         }
     }
@@ -216,6 +257,7 @@ public class WaveFunctionCollapse
     {
         WFCCell cell = GetAt(pos);
         if (cell == null) return new();
+        var neighbor = GetAt(pos + dir);
         List<WFCTile> possibleNeighbors = new();
         switch (dir)
         {
@@ -241,24 +283,6 @@ public class WaveFunctionCollapse
         possibleNeighbors = possibleNeighbors.Distinct().ToList();
         return possibleNeighbors;
     }
-
-    public void Constrain(Vector3Int pos, WFCTile tile)
-    {
-        WFCCell cell = GetAt(pos);
-        if (cell == null) return;
-        if (cell.Collapsed)
-        {
-            throw new Exception($"Attempting to constrain collapsed tile at {pos}");
-        }
-        if (!cell.possibleTiles.Remove(tile))
-        {
-            throw new Exception($"Failed to constrain {pos} to {tile}");
-        }
-        if (cell.possibleTiles.Count == 0)
-        {
-            throw new Exception($"No possible tiles at {pos}");
-        }
-    }
 }
 
 public class WFCCell
@@ -269,6 +293,17 @@ public class WFCCell
     public int Entropy { get { return possibleTiles.Count; } }
     public bool Collapsed { get { return Entropy == 1; } }
     public WFCTile Tile { get { return Collapsed ? possibleTiles[0] : null; } }
+
+    public WFCCell(List<WFCTile> tiles)
+    {
+        this.tiles = new(tiles);
+        possibleTiles = new(tiles);
+    }
+
+    public void Reset()
+    {
+        possibleTiles = new(tiles);
+    }
 
     public void CollapseTo(WFCTile tile)
     {
@@ -333,10 +368,10 @@ public struct WFCSockets
     {
         return new()
         {
-            xPos = HorizontalFlipped(xPos),
-            xNeg = HorizontalFlipped(xNeg),
-            zPos = HorizontalFlipped(zNeg),
-            zNeg = HorizontalFlipped(zPos),
+            xPos = HorizontalFlipped(xNeg),
+            xNeg = HorizontalFlipped(xPos),
+            zPos = HorizontalFlipped(zPos),
+            zNeg = HorizontalFlipped(zNeg),
             yPos = yPosFlipped,
             yNeg = yNegFlipped,
         };
@@ -397,7 +432,7 @@ public class WFCTile
     public WFCSockets sockets;
     public int rotationY;
     public bool flipX;
-    public string Name { get { return prefab.name; } }
+    public string Name { get { return prefab == null ? $"void({sockets.xPos})" : prefab.name; } }
 
     readonly List<WFCTile> xPosNeighbors = new();
     readonly List<WFCTile> xNegNeighbors = new();
@@ -413,14 +448,17 @@ public class WFCTile
     public List<WFCTile> ZPosNeighbors { get { return zPosNeighbors; } }
     public List<WFCTile> ZNegNeighbors { get { return zNegNeighbors; } }
 
-    public GameObject ToGameObject()
+    public GameObject ToGameObject(Transform parent = null)
     {
+        if (prefab == null) return null;
         GameObject go = GameObject.Instantiate(prefab);
-        go.transform.Rotate(0, 90 * rotationY, 0);
+        if (parent) go.transform.parent = parent;
+        go.transform.localPosition = new(0, 0, 0);
+        go.transform.localEulerAngles = new(0, 90 * rotationY, 0);
         if (flipX)
-        {
-            go.transform.localScale = new Vector3(-1, 1, 1);
-        }
+            go.transform.localScale = new(-1, 1, 1);
+        else
+            go.transform.localScale = new(1, 1, 1);
         return go;
     }
 
@@ -460,6 +498,11 @@ public class WFCTile
             }
         }
     }
+
+    public override string ToString()
+    {
+        return $"{Name} - {sockets.xPos} {sockets.xNeg} {sockets.yPos} {sockets.yNeg} {sockets.zPos} {sockets.zNeg}";
+    }
 }
 
 public enum Flip { None, X, Z }
@@ -470,7 +513,6 @@ public class GeneralWFCTile
     public GameObject prefab;
     public WFCSockets sockets;
     public bool rotates;
-    // public Flip flip;
     public bool flip;
     public string yPosFlipped;
     public string yNegFlipped;
