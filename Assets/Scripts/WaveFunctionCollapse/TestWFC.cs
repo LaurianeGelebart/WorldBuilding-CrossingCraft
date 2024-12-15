@@ -31,6 +31,8 @@ public class TestWFC : MonoBehaviour
     public List<GeneralWFCTile> tileset;
     readonly WaveFunctionCollapse wfc = new();
 
+    float timer = 0;
+
     bool halted = false;
     int iteration = 0;
 
@@ -65,18 +67,14 @@ public class TestWFC : MonoBehaviour
     void Update()
     {
         RenderWFC();
-        if (halted)
-        {
-            return;
-        }
+        if (halted) return;
+
+        timer += Time.deltaTime;
+        Iterate();
         if (wfc.IsCollapsed())
         {
-            stateText.text = "Collapsed";
+            stateText.text = "Collapsed in " + timer + " seconds";
             halted = true;
-        }
-        else
-        {
-            Iterate();
         }
     }
 
@@ -85,7 +83,7 @@ public class TestWFC : MonoBehaviour
         try
         {
             iteration++;
-            stateText.text = $"Iteration {iteration}";
+            stateText.text = $"Iteration {iteration} | Time: {timer}";
 
             wfc.Iterate();
         }
@@ -100,6 +98,7 @@ public class TestWFC : MonoBehaviour
 
     public void Reinitialize()
     {
+        timer = 0;
         wfc.Clear();
         for (int x = wfc.min.x; x <= wfc.max.x; x++)
         {
@@ -113,7 +112,7 @@ public class TestWFC : MonoBehaviour
         var width = max.x - min.x + 1;
         var height = max.y - min.y + 1;
         var depth = max.z - min.z + 1;
-        wfc.SetAt(new(width / 2, 2, depth / 2), wfc.tileset.Find(t => t.Name == TileName.Ground));
+        wfc.SetAt(new(width / 2, 1, depth / 2), wfc.tileset.Find(t => t.Name == TileName.Ground));
 
         halted = false;
         iteration = 0;
