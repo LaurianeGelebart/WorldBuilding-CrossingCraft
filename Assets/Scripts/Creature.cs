@@ -45,7 +45,7 @@ public class Creature
     public Creature(CreatureGenerator generator, SoundController soundController, CreatureType type)
     {
         genome = new List<int>();
-        
+
         // Premier bit du génome = type 
         int bitType = (type == CreatureType.Forest) ? 0 : 1;
         genome.Add(bitType);
@@ -78,22 +78,35 @@ public class Creature
     /// Methodes communes des constructeurs de creatures
     /// </summary>
     /// <param name="generator">Référence au générateur de modèles</param>
-    private void CreatureCommons(CreatureGenerator generator, SoundController controller)
+private void CreatureCommons(CreatureGenerator generator, SoundController controller)
     {
         creatureGenerator = generator;
-        soundController = controller;
-
+        
         DecodeGenome();
         EvaluateFitness();
         model = creatureGenerator.GenerateModel(this);
 
+        // Ajouter un sound controller au model 
+        soundController = model.AddComponent<SoundController>();
+        soundController.StartCoroutine(InitializeAudioAfterStart(controller));
+        
         CreatureMovement movementScript = model.AddComponent<CreatureMovement>();
         movementScript.Initialize(this);
 
-        // Ajouter un Collider au modèle
+        // Ajouter un Collider et un Rigidbody au model
         AddColliderToModel();
         AddRigidbodyToModel();
-            
+    }
+
+    private IEnumerator InitializeAudioAfterStart(SoundController controller)
+    {
+        // Attendre la fin de la frame pour être sûr que Start a été appelé 
+        yield return new WaitForEndOfFrame();
+
+        soundController.bornSound = controller.bornSound;
+        soundController.eatingSound = controller.eatingSound;
+        soundController.deathSound = controller.deathSound;
+
         soundController.PlayBornSound();
     }
 
@@ -114,12 +127,12 @@ public class Creature
     {
         if (model != null)
         {
-            UnityEngine.Object.Destroy(model);
             soundController.PlayDeathSound();
+            UnityEngine.Object.Destroy(model);
         }
     }
 
-     /// <summary>   
+    /// <summary>   
     /// Cycle de la vie, descend les pv de la créature en fonction du temps qui passe 
     /// </summary>
     public void Eat(float hunger)

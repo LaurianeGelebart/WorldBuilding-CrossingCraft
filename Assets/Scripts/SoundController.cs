@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundController : MonoBehaviour
@@ -7,8 +5,12 @@ public class SoundController : MonoBehaviour
     public AudioClip bornSound;
     public AudioClip eatingSound;
     public AudioClip deathSound;
-
-    // Reference to the AudioSource component
+    
+    [Range(0f, 1f)]
+    public float minDistance = 1f;
+    public float maxDistance = 80f;
+    private float _spatialBlend = 1f;  // 1 = 3D, 0 = 2D
+    
     private AudioSource _audioSource;
 
     void Start()
@@ -18,6 +20,11 @@ public class SoundController : MonoBehaviour
         {
             _audioSource = gameObject.AddComponent<AudioSource>();
         }
+        
+        _audioSource.spatialBlend = _spatialBlend;
+        _audioSource.minDistance = minDistance;
+        _audioSource.maxDistance = maxDistance;
+        _audioSource.rolloffMode = AudioRolloffMode.Linear;
     }
 
     public void PlayBornSound()
