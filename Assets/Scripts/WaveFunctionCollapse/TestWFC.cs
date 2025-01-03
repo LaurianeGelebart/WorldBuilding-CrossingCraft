@@ -15,6 +15,7 @@ public class TestWFC : MonoBehaviour
     public TextMeshProUGUI stateText;
 
     public bool renderIterations = false;
+    public bool manualIterations = false;
 
     public List<GeneralWFCTile> tileset;
     readonly WaveFunctionCollapse wfc = new();
@@ -28,8 +29,31 @@ public class TestWFC : MonoBehaviour
     void Start()
     {
         List<WFCTile> tiles = new();
+        // List<string> whiteList = new() {
+        //     TileName.ForestGround,
+        //     TileName.ForestGroundWallInnerCorner,
+        //     TileName.ForestGroundWallOuterCorner,
+        //     TileName.ForestCliffSide,
+        //     TileName.ForestCliffCorner,
+        //     TileName.ForestGroundWallSide,
+
+        //     TileName.DesertGround,
+        //     TileName.DesertGroundWallInnerCorner,
+        //     TileName.DesertGroundWallOuterCorner,
+        //     TileName.DesertCliffSide,
+        //     TileName.DesertCliffCorner,
+        //     TileName.DesertGroundWallSide,
+
+        //     TileName.TransitionForestDesertLinear,
+        //     TileName.TransitionForestDesertAngleDesert,
+        //     TileName.TransitionForestDesertAngleForest
+        // };
         foreach (var generalTile in tileset)
         {
+            // if (
+            //     generalTile.prefab != null &&
+            //     !whiteList.Contains(generalTile.prefab.name)
+            // ) continue;
             tiles.AddRange(generalTile.ToWFCTiles());
         }
         wfc.tileset = tiles;
@@ -38,15 +62,15 @@ public class TestWFC : MonoBehaviour
 
         wfc.weightCallback = (pos, tile) =>
         {
-            if (TileName.IsGround(tile.Name))
-                return 6;
+            if (tile.sockets.IsAll("-1"))
+                return 8;
+            else if (TileName.IsGround(tile.Name))
+                return 256;
             else if (TileName.IsWall(tile.Name))
                 return 0;
-            // else if (TileName.IsTransition(tile.Name))
-            //     return 2;
-            else if (tile.sockets.IsAll("-1")) // external void (air)
-                return 4;
-            return 3;
+            else if (TileName.IsTransition(tile.Name))
+                return 16;
+            return 2;
         };
 
         wfc.Initialize();
@@ -62,7 +86,9 @@ public class TestWFC : MonoBehaviour
             RenderWFC();
 
         timer += Time.deltaTime;
-        Iterate();
+        if (!manualIterations)
+            Iterate();
+
         if (wfc.IsCollapsed())
         {
             stateText.text = "Collapsed in " + timer + " seconds";
@@ -105,7 +131,7 @@ public class TestWFC : MonoBehaviour
         var width = max.x - min.x + 1;
         var height = max.y - min.y + 1;
         var depth = max.z - min.z + 1;
-        wfc.SetAt(new(width / 2, 1, depth / 2), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
+        wfc.SetAt(new(width / 2, 3, depth / 2), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
         wfc.SetAt(new(0, 1, 0), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
         wfc.SetAt(new(width - 1, 1, 0), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
         wfc.SetAt(new(0, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
