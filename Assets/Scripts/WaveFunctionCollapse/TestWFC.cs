@@ -7,21 +7,6 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-class TileName
-{
-    public static string Ground = "ground";
-    public static string GroundWallSide = "ground-wall-side";
-    public static string GroundWallInnerCorner = "ground-wall-inner-corner";
-    public static string GroundWallOuterCorner = "ground-wall-outer-corner";
-    public static string Wall = "wall";
-    public static string WallOuterSide = "wall-outer-side";
-    public static string WallInnerSide = "wall-inner-side";
-    public static string WallHole = "wall-hole";
-    public static string WallBulge = "wall-bulge";
-    public static string CliffSide = "cliff-side";
-    public static string CliffCorner = "cliff-corner";
-};
-
 public class TestWFC : MonoBehaviour
 {
     public Vector3Int min, max;
@@ -53,13 +38,15 @@ public class TestWFC : MonoBehaviour
 
         wfc.weightCallback = (pos, tile) =>
         {
-            if (tile.Name == TileName.Ground)
-                return 5;
-            else if (tile.Name == TileName.Wall)
+            if (TileName.IsGround(tile.Name))
+                return 6;
+            else if (TileName.IsWall(tile.Name))
                 return 0;
+            // else if (TileName.IsTransition(tile.Name))
+            //     return 2;
             else if (tile.sockets.IsAll("-1")) // external void (air)
-                return 3;
-            return 1;
+                return 4;
+            return 3;
         };
 
         wfc.Initialize();
@@ -118,7 +105,11 @@ public class TestWFC : MonoBehaviour
         var width = max.x - min.x + 1;
         var height = max.y - min.y + 1;
         var depth = max.z - min.z + 1;
-        wfc.SetAt(new(width / 2, 1, depth / 2), wfc.tileset.Find(t => t.Name == TileName.Ground));
+        wfc.SetAt(new(width / 2, 1, depth / 2), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
+        wfc.SetAt(new(0, 1, 0), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
+        wfc.SetAt(new(width - 1, 1, 0), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
+        wfc.SetAt(new(0, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
+        wfc.SetAt(new(width - 1, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
 
         halted = false;
         iteration = 0;
@@ -154,3 +145,80 @@ public class TestWFC : MonoBehaviour
         wfc.updated = false;
     }
 }
+
+class TileName
+{
+    public static string ForestGround = "f-ground";
+    public static string ForestGroundWallSide = "f-ground-wall-side";
+    public static string ForestGroundWallInnerCorner = "f-ground-wall-inner-corner";
+    public static string ForestGroundWallOuterCorner = "f-ground-wall-outer-corner";
+    public static string ForestWall = "f-wall";
+    public static string ForestWallOuterSide = "f-wall-outer-side";
+    public static string ForestWallInnerSide = "f-wall-inner-side";
+    public static string ForestWallHole = "f-wall-hole";
+    public static string ForestWallBulge = "f-wall-bulge";
+    public static string ForestCliffSide = "f-cliff-side";
+    public static string ForestCliffCorner = "f-cliff-corner";
+
+    public static string DesertGround = "d-ground";
+    public static string DesertGroundWallSide = "d-ground-wall-side";
+    public static string DesertGroundWallInnerCorner = "d-ground-wall-inner-corner";
+    public static string DesertGroundWallOuterCorner = "d-ground-wall-outer-corner";
+    public static string DesertWall = "d-wall";
+    public static string DesertWallOuterSide = "d-wall-outer-side";
+    public static string DesertWallInnerSide = "d-wall-inner-side";
+    public static string DesertWallHole = "d-wall-hole";
+    public static string DesertWallBulge = "d-wall-bulge";
+    public static string DesertCliffSide = "d-cliff-side";
+    public static string DesertCliffCorner = "d-cliff-corner";
+
+    public static string TransitionForestDesertLinear = "transition-linear";
+    public static string TransitionForestDesertAngleDesert = "transition-angle-desert";
+    public static string TransitionForestDesertAngleForest = "transition-angle-forest";
+
+    public static bool IsForest(string name)
+    {
+        return name.StartsWith("f-");
+    }
+    public static bool IsDesert(string name)
+    {
+        return name.StartsWith("d-");
+    }
+    public static bool IsTransition(string name)
+    {
+        return name.StartsWith("transition-");
+    }
+
+    public static bool IsGround(string name)
+    {
+        return name.EndsWith("-ground");
+    }
+    public static bool IsWall(string name)
+    {
+        return name.EndsWith("-wall");
+    }
+    public static bool IsCliff(string name)
+    {
+        return name.EndsWith("-cliff");
+    }
+    public static bool HasGround(string name)
+    {
+        return name.Contains("ground");
+    }
+    public static bool HasWall(string name)
+    {
+        return name.Contains("wall");
+    }
+    public static bool HasCliff(string name)
+    {
+        return name.Contains("cliff");
+    }
+    public static bool HasHole(string name)
+    {
+        return name.Contains("hole");
+    }
+    public static bool HasBulge(string name)
+    {
+        return name.Contains("bulge");
+    }
+};
