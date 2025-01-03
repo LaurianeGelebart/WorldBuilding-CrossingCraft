@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6823055174810640465}
   - component: {fileID: -5212437446242324883}
   m_Layer: 0
-  m_Name: fttad
+  m_Name: transition-angle-desert
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -126,7 +126,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 8c82d524304d1c642b4c13c601e5306a, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 4b785f919ad30be4d889a33591001075, type: 2}
+      objectReference: {fileID: 2100000, guid: 7916a5284e86bc007b0448788d333f17, type: 2}
     - target: {fileID: 919132149155446097, guid: 8c82d524304d1c642b4c13c601e5306a, type: 3}
       propertyPath: m_Name
       value: td-ground
