@@ -10,6 +10,7 @@ public class Creature
     public GameObject model;           // Modèle 3D associé à la créature
     public Collider creatureCollider;  // Collider de la créature
     public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
+    public SoundController soundController;
     public int genomeLength = 21;
 
     public float pv;
@@ -35,17 +36,16 @@ public class Creature
     public float ScaleFactor => _scaleFactor;
     public float Speed => _speed;
 
-
     /// <summary>
     /// Constructeur pour créer une créature avec un génome aléatoire d'une longueur donnée
     /// Décode le génome et génère un modèle 3D 
     /// </summary>
     /// <param name="genomeLength">Longueur du génome (en bits)</param>
     /// <param name="generator">Référence au générateur de modèles</param>
-    public Creature(CreatureGenerator generator, CreatureType type)
+    public Creature(CreatureGenerator generator, SoundController soundController, CreatureType type)
     {
         genome = new List<int>();
-        
+
         // Premier bit du génome = type 
         int bitType = (type == CreatureType.Forest) ? 0 : 1;
         genome.Add(bitType);
@@ -56,7 +56,7 @@ public class Creature
             genome.Add(Random.Range(0, 2));
         }
 
-        CreatureCommons(generator);
+        CreatureCommons(generator, soundController);
     }
 
 
@@ -66,10 +66,10 @@ public class Creature
     /// </summary>
     /// <param name="generatedGenome">Génome prédéfini</param>
     /// <param name="generator">Référence au générateur de modèles</param>
-    public Creature(List<int> generatedGenome, CreatureGenerator generator)
+    public Creature(List<int> generatedGenome, CreatureGenerator generator, SoundController soundController)
     {
         genome = generatedGenome;
-        CreatureCommons(generator);
+        CreatureCommons(generator, soundController);
     }
 
 
@@ -78,20 +78,36 @@ public class Creature
     /// Methodes communes des constructeurs de creatures
     /// </summary>
     /// <param name="generator">Référence au générateur de modèles</param>
-    private void CreatureCommons(CreatureGenerator generator)
+private void CreatureCommons(CreatureGenerator generator, SoundController controller)
     {
         creatureGenerator = generator;
-
+        
         DecodeGenome();
         EvaluateFitness();
         model = creatureGenerator.GenerateModel(this);
 
+        // Ajouter un sound controller au model 
+        soundController = model.AddComponent<SoundController>();
+        soundController.StartCoroutine(InitializeAudioAfterStart(controller));
+        
         CreatureMovement movementScript = model.AddComponent<CreatureMovement>();
         movementScript.Initialize(this);
 
-        // Ajouter un Collider au modèle
+        // Ajouter un Collider et un Rigidbody au model
         AddColliderToModel();
         AddRigidbodyToModel();
+    }
+
+    private IEnumerator InitializeAudioAfterStart(SoundController controller)
+    {
+        // Attendre la fin de la frame pour être sûr que Start a été appelé 
+        yield return new WaitForEndOfFrame();
+
+        soundController.bornSound = controller.bornSound;
+        soundController.eatingSound = controller.eatingSound;
+        soundController.deathSound = controller.deathSound;
+
+        soundController.PlayBornSound();
     }
 
 
@@ -111,8 +127,18 @@ public class Creature
     {
         if (model != null)
         {
+            soundController.PlayDeathSound();
             UnityEngine.Object.Destroy(model);
         }
+    }
+
+    /// <summary>   
+    /// Cycle de la vie, descend les pv de la créature en fonction du temps qui passe 
+    /// </summary>
+    public void Eat(float hunger)
+    {
+        faim = Mathf.Min(faim + hunger, 100f); // cap à 100
+        soundController.PlayEatingSound();
     }
 
 
