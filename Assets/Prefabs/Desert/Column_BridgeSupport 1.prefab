@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1989309705645052422}
   - component: {fileID: 1365974520672252977}
   - component: {fileID: 2065194428310707989}
+  - component: {fileID: 5246831150155008942}
   m_Layer: 0
   m_Name: Column_BridgeSupport 1
   m_TagString: Untagged
@@ -84,3 +85,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5246831150155008942
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3423171579927888312}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.01, y: 0.01, z: 0.04}
+  m_Center: {x: 0, y: 0, z: 0.02}
