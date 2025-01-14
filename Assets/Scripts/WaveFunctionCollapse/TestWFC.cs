@@ -65,11 +65,13 @@ public class TestWFC : MonoBehaviour
             if (tile.sockets.IsAll("-1"))
                 return 8;
             else if (TileName.IsGround(tile.Name))
-                return 256;
-            else if (TileName.IsWall(tile.Name))
+                //     return 256;
+                // else if (TileName.IsWall(tile.Name))
                 return 0;
             else if (TileName.IsTransition(tile.Name))
                 return 16;
+            else if (TileName.HasWater(tile.Name))
+                return 256;
             return 2;
         };
 
@@ -131,11 +133,12 @@ public class TestWFC : MonoBehaviour
         var width = max.x - min.x + 1;
         var height = max.y - min.y + 1;
         var depth = max.z - min.z + 1;
-        wfc.SetAt(new(width / 2, 3, depth / 2), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
         wfc.SetAt(new(0, 1, 0), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
+        wfc.SetAt(new(width / 2, 1, 0), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
         wfc.SetAt(new(width - 1, 1, 0), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
-        wfc.SetAt(new(0, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
-        wfc.SetAt(new(width - 1, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.DesertGround));
+        wfc.SetAt(new(0, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
+        wfc.SetAt(new(width / 2, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
+        wfc.SetAt(new(width - 1, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
 
         halted = false;
         iteration = 0;
@@ -213,6 +216,10 @@ class TileName
     public static bool IsTransition(string name)
     {
         return name.StartsWith("transition-");
+    }
+    public static bool HasWater(string name)
+    {
+        return name.Contains("water");
     }
 
     public static bool IsGround(string name)
