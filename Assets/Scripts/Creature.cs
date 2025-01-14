@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 public class Creature
@@ -73,22 +74,64 @@ public class Creature
     /// Methodes communes des constructeurs de creatures
     /// </summary>
     /// <param name="generator">Référence au générateur de modèles</param>
-    private void CreatureCommons(CreatureGenerator generator){
+    public void CreatureCommons(CreatureGenerator generator)
+    {
         creatureGenerator = generator;
 
         DecodeGenome();
         EvaluateFitness();
         model = creatureGenerator.GenerateModel(this);
 
+        bool placedSuccessfully = false;
+        int maxAttempts = 10;
+        float searchRadius = 20f;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            NavMeshHit hit;
+            Vector3 randomOffset = Random.insideUnitSphere * searchRadius;
+            randomOffset.y = 0;
+
+            if (NavMesh.SamplePosition(model.transform.position + randomOffset, out hit, searchRadius, NavMesh.AllAreas))
+            {
+                model.transform.position = hit.position;
+
+                // Calculer le baseOffset en fonction du ScaleFactor
+                float baseHeight = 12f; // Hauteur de base du collider
+                float scaledHeight = baseHeight * ScaleFactor;
+                float baseOffset = scaledHeight / 2f; // Moitié de la hauteur totale
+
+                // Ajouter NavMeshAgent avec le baseOffset calculé
+                NavMeshAgent navMeshAgent = model.AddComponent<NavMeshAgent>();
+                navMeshAgent.speed = Speed;
+                navMeshAgent.acceleration = 8f;
+                navMeshAgent.angularSpeed = 120f;
+                navMeshAgent.stoppingDistance = 0.5f;
+                navMeshAgent.baseOffset = baseOffset;
+                navMeshAgent.radius = 1f * (ScaleFactor/2);  // Ajustez la taille du radius du NavMesh
+                navMeshAgent.height = 1f * (ScaleFactor / 2);
+
+                placedSuccessfully = true;
+                break;
+            }
+        }
+
+        
+
+        if (!placedSuccessfully)
+        {
+            Debug.LogError($"Could not place creature on NavMesh after {maxAttempts} attempts!");
+            // Optionnel : Détruire le modèle ou le repositionner manuellement
+            UnityEngine.Object.Destroy(model);
+            return;
+        }
+
         CreatureMovement movementScript = model.AddComponent<CreatureMovement>();
         movementScript.Initialize(this);
 
-        // Ajouter un Collider au modèle
         AddColliderToModel();
         AddRigidbodyToModel();
     }
-
-
 
     /// <summary>   
     /// Cycle de la vie, descend les pv de la créature en fonction du temps qui passe 
@@ -110,7 +153,7 @@ public class Creature
     }
 
 
-    private void AddColliderToModel()
+    /*private void AddColliderToModel()
     {
         // Ajouter un Collider de type CapsuleCollider au modèle
         BoxCollider collider = model.AddComponent<BoxCollider>();
@@ -119,6 +162,34 @@ public class Creature
         float scaleFactor = ScaleFactor;
         collider.size = new Vector3(4f, 12f, 2f);
         collider.center = new Vector3 (0, -0.35f, 0); 
+
+        // Rendre le collider comme un trigger pour les interactions
+        collider.isTrigger = false;
+
+        // Stocker la référence du Collider
+        creatureCollider = collider;
+    }*/
+
+    private void AddColliderToModel()
+    {
+        // Ajouter un Collider de type CapsuleCollider au modèle
+        BoxCollider collider = model.AddComponent<BoxCollider>();
+
+        // Dimensions de base du collider
+        float baseWidth = 4f;
+        float baseHeight = 12f;
+        float baseDepth = 2f;
+
+        // Ajuster la taille du collider en fonction du ScaleFactor
+        collider.size = new Vector3(
+            baseWidth * (ScaleFactor/2),
+            baseHeight * (ScaleFactor / 2),
+            baseDepth * (ScaleFactor / 2)
+        );
+
+        // Ajuster aussi le centre du collider en fonction de la taille
+        float centerOffset = -0.35f * (ScaleFactor/2);
+        collider.center = new Vector3(0, centerOffset, 0);
 
         // Rendre le collider comme un trigger pour les interactions
         collider.isTrigger = false;
@@ -137,6 +208,8 @@ public class Creature
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
+
+    
 
 
     /// <summary>
