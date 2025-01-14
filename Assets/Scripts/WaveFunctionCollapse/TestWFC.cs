@@ -60,19 +60,41 @@ public class TestWFC : MonoBehaviour
         wfc.min = min;
         wfc.max = max;
 
+        var width = max.x - min.x + 1;
+        var height = max.y - min.y + 1;
+        var depth = max.z - min.z + 1;
+
         wfc.weightCallback = (pos, tile) =>
         {
-            if (tile.sockets.IsAll("-1"))
-                return 8;
-            else if (TileName.IsGround(tile.Name))
-                //     return 256;
-                // else if (TileName.IsWall(tile.Name))
-                return 0;
-            else if (TileName.IsTransition(tile.Name))
-                return 16;
-            else if (TileName.HasWater(tile.Name))
-                return 256;
-            return 2;
+            var val = 10;
+            if (TileName.HasWater(tile.Name))
+                val = 500;
+            if (TileName.IsGround(tile.Name) || TileName.HasProps(tile.Name))
+                val = 500;
+            if (TileName.HasWall(tile.Name))
+                val = 1;
+
+            float forest_weight = Mathf.InverseLerp(min.z, max.z, pos.z);
+            float desert_weight = Mathf.InverseLerp(max.z, min.z, pos.z);
+            // float transition_weight = (1 - Mathf.Abs(z - 0.5f)) * 2;
+            if (TileName.IsForest(tile.Name))
+                return (int)(val * forest_weight);
+            else if (TileName.IsDesert(tile.Name))
+                return (int)(val * desert_weight);
+            // else if (TileName.IsTransition(tile.Name))
+            //     return (int)(val * transition_weight);
+            // if (tile.sockets.IsAll("-1"))
+            //     return 8;
+            // else if (TileName.IsGround(tile.Name))
+            //     return 256;
+            // // else if (TileName.IsWall(tile.Name))
+            // return 0;
+            // else if (TileName.IsTransition(tile.Name))
+            //     return 16;
+            // else if (TileName.HasWater(tile.Name))
+            //     return 256;
+            // return 2;
+            return 1;
         };
 
         wfc.Initialize();
@@ -139,6 +161,9 @@ public class TestWFC : MonoBehaviour
         wfc.SetAt(new(0, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
         wfc.SetAt(new(width / 2, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
         wfc.SetAt(new(width - 1, 1, depth - 1), wfc.tileset.Find(t => t.Name == TileName.ForestGround));
+        wfc.SetAt(new(0, 1, depth / 2), wfc.tileset.Find(t => t.Name == TileName.TransitionForestDesertLinear && t.rotationY == 3));
+        wfc.SetAt(new(width / 2, 1, depth / 2), wfc.tileset.Find(t => t.Name == TileName.TransitionForestDesertLinear && t.rotationY == 3));
+        wfc.SetAt(new(width - 1, 1, depth / 2), wfc.tileset.Find(t => t.Name == TileName.TransitionForestDesertLinear && t.rotationY == 3));
 
         halted = false;
         iteration = 0;
@@ -220,6 +245,10 @@ class TileName
     public static bool HasWater(string name)
     {
         return name.Contains("water");
+    }
+    public static bool HasProps(string name)
+    {
+        return name.Contains("trees") || name.Contains("rocks");
     }
 
     public static bool IsGround(string name)
