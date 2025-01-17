@@ -76,25 +76,11 @@ public class TestWFC : MonoBehaviour
 
             float forest_weight = Mathf.InverseLerp(min.z, max.z, pos.z);
             float desert_weight = Mathf.InverseLerp(max.z, min.z, pos.z);
-            // float transition_weight = (1 - Mathf.Abs(z - 0.5f)) * 2;
             if (TileName.IsForest(tile.Name))
                 return (int)(val * forest_weight);
             else if (TileName.IsDesert(tile.Name))
                 return (int)(val * desert_weight);
-            // else if (TileName.IsTransition(tile.Name))
-            //     return (int)(val * transition_weight);
-            // if (tile.sockets.IsAll("-1"))
-            //     return 8;
-            // else if (TileName.IsGround(tile.Name))
-            //     return 256;
-            // // else if (TileName.IsWall(tile.Name))
-            // return 0;
-            // else if (TileName.IsTransition(tile.Name))
-            //     return 16;
-            // else if (TileName.HasWater(tile.Name))
-            //     return 256;
-            // return 2;
-            return 1;
+            return val;
         };
 
         wfc.Initialize();
