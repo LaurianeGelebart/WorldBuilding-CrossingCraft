@@ -172,7 +172,7 @@ Shader "Unlit/Water"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float2 uv = i.worldPos.xz * _Scale;
+                float2 uv = i.worldPos.xz * _Scale + 1000;
                 uint seed = 0x578437adU;
                 float2 t = float2(_Time.y, 0) * _Speed;
 

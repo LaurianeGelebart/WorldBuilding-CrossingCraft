@@ -15,6 +15,7 @@ public class WFCViewerManager : MonoBehaviour
 
     public float neighboursDistance = 30;
     public float neighboursScale = 1;
+    public float neighboursPadding = 5;
 
     public List<GeneralWFCTile> generalTiles;
     private List<WFCTile> tiles = new();
@@ -90,7 +91,7 @@ public class WFCViewerManager : MonoBehaviour
             tileObj.Tile = tile;
             tileObj.textDistance = 2;
             tileObj.transform.localPosition =
-                5 * new Vector3(i % width, 0, (float)Math.Floor(i / width))
+                neighboursPadding * new Vector3(i % width, 0, (float)Math.Floor(i / width))
                 - new Vector3(width / 2, 0, width / 2);
         }
     }

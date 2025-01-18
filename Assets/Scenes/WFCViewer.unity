@@ -310,7 +310,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7387093453244132230, guid: 04b72e7cc33167d6eb304526951a3b47, type: 3}
       propertyPath: m_LocalScale.z
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7387093453244132230, guid: 04b72e7cc33167d6eb304526951a3b47, type: 3}
       propertyPath: m_LocalPosition.x
@@ -967,135 +967,304 @@ MonoBehaviour:
   inputField: {fileID: 799099996}
   neighboursDistance: 40
   neighboursScale: 1.5
+  neighboursPadding: 7.5
   generalTiles:
-  - prefab: {fileID: 2118825536948099646, guid: 817b68996f27d75c2a834ba0d387a3c3, type: 3}
+  - prefab: {fileID: 3612486163611764765, guid: 356a21fe4f1c7c244a65a7ff8179dd1a, type: 3}
     sockets:
-      xPos: 0s
-      xNeg: 0s
+      xPos: f0s
+      xNeg: f0s
       yPos: -1
       yNeg: -2
-      zPos: 0s
-      zNeg: 0s
+      zPos: f0s
+      zNeg: f0s
     rotates: 0
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
-  - prefab: {fileID: 2118825536948099646, guid: 2bd0f8a611af0ac06ac729d2c2357673, type: 3}
+  - prefab: {fileID: 750115697164534306, guid: 1bf544c26b8cd9542a6b66705689a430, type: 3}
     sockets:
       xPos: -2
-      xNeg: 0s
-      yPos: v0_2
+      xNeg: f0s
+      yPos: vf0_2
       yNeg: -2
-      zPos: 0
-      zNeg: 0f
+      zPos: f0
+      zNeg: f0f
     rotates: 1
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
-  - prefab: {fileID: 2118825536948099646, guid: 4bdc8fbc7e8dd63f4b09b378c280c3b6, type: 3}
+  - prefab: {fileID: 3188251810544651070, guid: 853bb95dbca1bb74ba25f2868cc98c99, type: 3}
     sockets:
       xPos: -2
-      xNeg: 0f
-      yPos: v1_3
+      xNeg: f0f
+      yPos: vf1_3
       yNeg: -2
-      zPos: 0
+      zPos: f0
       zNeg: -2
     rotates: 1
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
-  - prefab: {fileID: 2118825536948099646, guid: 29df4a6614bb39bf7bc2070ad3d268b2, type: 3}
+  - prefab: {fileID: 1804243060892814930, guid: 20f0d6bb9eb72f045a609b864567e2b4, type: 3}
     sockets:
-      xPos: 0
-      xNeg: 0s
-      yPos: v1_1
+      xPos: f0
+      xNeg: f0s
+      yPos: vf1_1
       yNeg: -2
-      zPos: 0s
-      zNeg: 0f
+      zPos: f0s
+      zNeg: f0f
     rotates: 1
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
-  - prefab: {fileID: 2118825536948099646, guid: c98293c122e925815bc5d148b8134ac8, type: 3}
+  - prefab: {fileID: 4653510311159062919, guid: fbe4cc223135e6a44b2de161dfc66ab8, type: 3}
     sockets:
       xPos: -2
       xNeg: -1
-      yPos: v0_2
-      yNeg: v0_2
-      zPos: 1
-      zNeg: 1f
+      yPos: vf0_2
+      yNeg: vf0_2
+      zPos: f1
+      zNeg: f1f
     rotates: 1
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
-  - prefab: {fileID: 2118825536948099646, guid: dbaaa63c3e2c872cf8a6587b134409a8, type: 3}
+  - prefab: {fileID: 9099763651066616687, guid: 5c2e5cba2f2251b41b89b4cd218805d8, type: 3}
     sockets:
-      xPos: 1
+      xPos: f1
       xNeg: -1
-      yPos: v2_3
-      yNeg: v2_3
+      yPos: vf2_3
+      yNeg: vf2_3
       zPos: -1
-      zNeg: 1f
+      zNeg: f1f
     rotates: 1
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
-  - prefab: {fileID: 2118825536948099646, guid: 85e7902f053e90e4b90ea822e10e82a7, type: 3}
+  - prefab: {fileID: 254523122927647898, guid: 8ff185ef1fa5c024fbdbee2539785dfa, type: 3}
     sockets:
       xPos: -2
-      xNeg: 1f
-      yPos: v1_3
-      yNeg: v1_3
-      zPos: 1
+      xNeg: f1f
+      yPos: vf1_3
+      yNeg: vf1_3
+      zPos: f1
       zNeg: -2
     rotates: 1
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
-  - prefab: {fileID: 2118825536948099646, guid: 6952f6eb67f87c08fad96085aeead853, type: 3}
+  - prefab: {fileID: 3024540118808938891, guid: 4e6cbf029d9bf7a4ab9db1f1b73785be, type: 3}
     sockets:
-      xPos: 1
-      xNeg: 2f
-      yPos: v2_3
-      yNeg: v0_3
+      xPos: f1
+      xNeg: f2f
+      yPos: vf2_3
+      yNeg: vf0_3
       zPos: -1
-      zNeg: 0f
+      zNeg: f0f
     rotates: 1
     flip: 1
-    yPosFlipped: v2_0
-    yNegFlipped: v0_3
-  - prefab: {fileID: 2118825536948099646, guid: 5da4c81060b1e4e4a9bc346cb1606ddd, type: 3}
+    yPosFlipped: vf2_0
+    yNegFlipped: vf0_3
+  - prefab: {fileID: 4616461278363078195, guid: a38a1821e82035947a01917d48f4108d, type: 3}
     sockets:
       xPos: -2
-      xNeg: 2f
-      yPos: v0_2
-      yNeg: v1_3
-      zPos: 1
-      zNeg: 0f
+      xNeg: f2f
+      yPos: vf0_2
+      yNeg: vf1_3
+      zPos: f1
+      zNeg: f0f
     rotates: 1
     flip: 1
-    yPosFlipped: v0_0
-    yNegFlipped: v1_0
-  - prefab: {fileID: 2118825536948099646, guid: 6b073009d89c1e63a8426054cd385f04, type: 3}
+    yPosFlipped: vf0_0
+    yNegFlipped: vf1_0
+  - prefab: {fileID: 3769777594782075473, guid: d7607ef4874ade74fb620940f1f690d6, type: 3}
     sockets:
-      xPos: 0s
+      xPos: f0s
       xNeg: -1
       yPos: -1
-      yNeg: v0_2
-      zPos: 2
-      zNeg: 2f
+      yNeg: vf0_2
+      zPos: f2
+      zNeg: f2f
     rotates: 1
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
-  - prefab: {fileID: 2118825536948099646, guid: 87e374574df4a3474af59693fa12bfcd, type: 3}
+  - prefab: {fileID: 1266379717974069368, guid: c26a7e23c1569a344aadf0489d28ea18, type: 3}
     sockets:
-      xPos: 2
+      xPos: f2
       xNeg: -1
       yPos: -1
-      yNeg: v2_3
+      yNeg: vf2_3
       zPos: -1
-      zNeg: 2f
+      zNeg: f2f
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 2218033440535656216, guid: c35c2b306c809bd4fa37f7c563ac69f7, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0s
+    rotates: 0
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 596508315962035078, guid: c32f551862ad4ff458f8cfb014f590db, type: 3}
+    sockets:
+      xPos: -2
+      xNeg: d0s
+      yPos: vd0_2
+      yNeg: -2
+      zPos: d0
+      zNeg: d0f
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 5247126332363961390, guid: ae083a83f05a0cc45b9e84580d1d66ce, type: 3}
+    sockets:
+      xPos: -2
+      xNeg: d0f
+      yPos: vd1_3
+      yNeg: -2
+      zPos: d0
+      zNeg: -2
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 8598906381144869200, guid: 542e3b5a55b6c1745baf786c277aa7aa, type: 3}
+    sockets:
+      xPos: d0
+      xNeg: d0s
+      yPos: vd1_1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0f
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 7834723834617991695, guid: ed67b6cce8ca40b4e80f19ac62ee2d59, type: 3}
+    sockets:
+      xPos: -2
+      xNeg: -1
+      yPos: vd0_2
+      yNeg: vd0_2
+      zPos: d1
+      zNeg: d1f
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 624050975993701946, guid: 6da882abbc9ab8e49b531e586887562d, type: 3}
+    sockets:
+      xPos: d1
+      xNeg: -1
+      yPos: vd2_3
+      yNeg: vd2_3
+      zPos: -1
+      zNeg: d1f
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 808827433387754751, guid: 0718df220593b1e47914c470ff9cc722, type: 3}
+    sockets:
+      xPos: -2
+      xNeg: d1f
+      yPos: vd1_3
+      yNeg: vd1_3
+      zPos: d1
+      zNeg: -2
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 7725420350280493648, guid: 6b2dc52826a68cc49bb1757a988b8c5d, type: 3}
+    sockets:
+      xPos: 1
+      xNeg: d2f
+      yPos: vd2_3
+      yNeg: vd0_3
+      zPos: -1
+      zNeg: d0f
+    rotates: 1
+    flip: 1
+    yPosFlipped: vd2_0
+    yNegFlipped: vd0_3
+  - prefab: {fileID: 2673040196814902649, guid: 3937d22478bd5264db302d11eaa2e481, type: 3}
+    sockets:
+      xPos: -2
+      xNeg: d2f
+      yPos: vd0_2
+      yNeg: vd1_3
+      zPos: d1
+      zNeg: d0f
+    rotates: 1
+    flip: 1
+    yPosFlipped: vd0_0
+    yNegFlipped: vd1_0
+  - prefab: {fileID: 6965795327821749555, guid: ff799fda11ec28546ad57efe4cb3ae7d, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: -1
+      yPos: -1
+      yNeg: vd0_2
+      zPos: d2
+      zNeg: d2f
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 8626310738061168572, guid: 566d4d37c7d215445b878780155711c8, type: 3}
+    sockets:
+      xPos: d2
+      xNeg: -1
+      yPos: -1
+      yNeg: vd2_3
+      zPos: -1
+      zNeg: d2f
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 7737282429139303222, guid: b50be434e90580440a6f6da069861066, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: t0f
+      zNeg: t0
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 1938146157796552172, guid: f1eea6b77bbc23c4787d184151ce2ed0, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: t0
+      yPos: -1
+      yNeg: -2
+      zPos: t0f
+      zNeg: f0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 7650120166338293263, guid: 65125606bc1493c49914c3ef2767eed2, type: 3}
+    sockets:
+      xPos: t0f
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: t0
     rotates: 1
     flip: 0
     yPosFlipped: 
@@ -1121,6 +1290,66 @@ MonoBehaviour:
       zPos: -2
       zNeg: -2
     rotates: 0
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 7255865488152975505, guid: 561891b2467c0edc688b69a0356db228, type: 3}
+    sockets:
+      xPos: w0s
+      xNeg: w0s
+      yPos: -1
+      yNeg: -2
+      zPos: w0s
+      zNeg: w0s
+    rotates: 0
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 4785130051121771347, guid: 565438d1242d693aca5ccdd2f451cd61, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: tfw0
+      yPos: -1
+      yNeg: -2
+      zPos: tfw0f
+      zNeg: f0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 3010530899750348413, guid: 06f3418340d46332fab963a6dbc8435a, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: w0s
+      yPos: -1
+      yNeg: -2
+      zPos: tfw0f
+      zNeg: tfw0
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 4785130051121771347, guid: 58c219c150c1a45c2a438875b013d1b3, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: tdw0
+      yPos: -1
+      yNeg: -2
+      zPos: tdw0f
+      zNeg: d0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 3010530899750348413, guid: c6559a168393fa5f1a9bc30fb1e21217, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: w0s
+      yPos: -1
+      yNeg: -2
+      zPos: tdw0f
+      zNeg: tdw0
+    rotates: 1
     flip: 0
     yPosFlipped: 
     yNegFlipped: 
