@@ -18,7 +18,7 @@ public class TerrainController : MonoBehaviour
     public bool manualIterations = false;
 
     public List<GeneralWFCTile> tileset;
-    readonly WaveFunctionCollapse wfc = new();
+    public readonly WaveFunctionCollapse wfc = new();
 
     float timer = 0;
 
@@ -162,6 +162,23 @@ public class TerrainController : MonoBehaviour
             }
         }
         wfc.updated = false;
+    }
+
+    public Vector3Int WorldToGrid(Vector3 pos)
+    {
+        return new(
+            (int)(pos.x / (tileSize.x * transform.localScale.x)),
+            (int)(pos.y / (tileSize.y * transform.localScale.y)),
+            (int)(pos.z / (tileSize.z * transform.localScale.z))
+        );
+    }
+    public Vector3 GridToWorld(Vector3Int pos)
+    {
+        return new(
+            pos.x * (tileSize.x * transform.localScale.x),
+            pos.y * (tileSize.y * transform.localScale.y),
+            pos.z * (tileSize.z * transform.localScale.z)
+        );
     }
 }
 

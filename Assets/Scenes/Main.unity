@@ -291,31 +291,37 @@ MonoBehaviour:
     spawnChance: 0.2
     nutritionalValue: 15
     poisonIntensity: 0
+    environment: 1
   - category: 1
     prefab: {fileID: 4391950474089961646, guid: 7f85d2cbb6d150a4390795fa85c1fb0d, type: 3}
     spawnChance: 0.2
     nutritionalValue: 20
     poisonIntensity: 0
+    environment: 1
   - category: 2
     prefab: {fileID: 4762716787874084452, guid: e72a438943b521a42b3c6057e2ad5ae4, type: 3}
     spawnChance: 0.2
     nutritionalValue: 12
     poisonIntensity: 0
+    environment: 0
   - category: 3
     prefab: {fileID: 5643297229025309468, guid: f49195c505d25814c97ced6ccd4e8811, type: 3}
     spawnChance: 0.3
     nutritionalValue: 10
     poisonIntensity: 0
+    environment: 0
   - category: 4
     prefab: {fileID: 8907681535546072034, guid: 31e5d341b317eb6468d873481dfbe853, type: 3}
     spawnChance: 0.2
     nutritionalValue: 5
     poisonIntensity: 0
+    environment: 0
   - category: 5
     prefab: {fileID: 662663945696984311, guid: 361490906aaae904c9f00c26b7da6455, type: 3}
     spawnChance: 0.1
     nutritionalValue: 0
     poisonIntensity: 30
+    environment: 2
   foodSpawnInterval: 10
   maxFoodSpawn: 8
   spawnAreaSize: 1
@@ -323,6 +329,7 @@ MonoBehaviour:
   initialFoodSpawnCount: 5
   min: {x: 0, y: 32, z: 0}
   max: {x: 640, y: 32, z: 640}
+  terrainController: {fileID: 1298720581}
 --- !u!4 &215117473
 Transform:
   m_ObjectHideFlags: 0

@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
     void Live()
     {
         _creaturesPopulation.Update();
-        FoodController foodController = FindObjectOfType<FoodController>();
+        // FoodController foodController = FindObjectOfType<FoodController>();
         foreach (var creature in _creaturesPopulation.Members)
         {
             foodController.UpdateCreatureHunger(creature);
