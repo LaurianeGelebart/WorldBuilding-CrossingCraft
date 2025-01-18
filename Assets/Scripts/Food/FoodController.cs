@@ -21,6 +21,8 @@ public class FoodController : MonoBehaviour
     public float hungerDecreaseRate = 1f;
     public int initialFoodSpawnCount = 5;
 
+    public Vector3 min, max;
+
     private Population currentPopulation;
     private float foodSpawnTimer = 0f;
 
@@ -32,7 +34,7 @@ public class FoodController : MonoBehaviour
     void Start()
     {
         // Spawn initial food
-        SpawnInitialFood();
+        // SpawnInitialFood();
     }
 
     void Update()
@@ -49,7 +51,7 @@ public class FoodController : MonoBehaviour
         }
     }
 
-    void SpawnInitialFood()
+    public void SpawnInitialFood()
     {
         for (int i = 0; i < initialFoodSpawnCount; i++)
         {
@@ -65,14 +67,11 @@ public class FoodController : MonoBehaviour
         FoodSpawnConfig selectedFood = foodTypes[Random.Range(0, foodTypes.Count)];
 
         // Position de spawn aléatoire
-        Vector3 spawnPosition = new Vector3(
-            Random.Range(-spawnAreaSize * 2, spawnAreaSize / 2),
-            2f,
-            Random.Range(-spawnAreaSize / 2, spawnAreaSize / 2)
-        );
+        Vector3 spawnPosition = new(Random.Range(min.x, max.x), Random.Range(min.y, max.y), Random.Range(min.z, max.z));
 
         // Instancier la nourriture
-        GameObject spawnedFood = Instantiate(selectedFood.prefab, spawnPosition, Quaternion.identity);
+        // GameObject spawnedFood = Instantiate(selectedFood.prefab, spawnPosition, Quaternion.identity);
+        GameObject spawnedFood = Instantiate(selectedFood.prefab);
 
         // Configurer l'item de nourriture
         FoodItem foodItem = spawnedFood.GetComponent<FoodItem>() ?? spawnedFood.AddComponent<FoodItem>();
@@ -85,9 +84,9 @@ public class FoodController : MonoBehaviour
 
         // Ajuster la position
         spawnedFood.transform.position = new Vector3(
-            spawnPosition.x * 8,
+            spawnPosition.x,
             spawnPosition.y,
-            spawnPosition.z * 8
+            spawnPosition.z
         );
     }
 

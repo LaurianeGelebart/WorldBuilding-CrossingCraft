@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraSpin : MonoBehaviour
 {
-    public TestWFC twfc;
+    public TerrainController twfc;
 
     // Start is called before the first frame update
     void Start()

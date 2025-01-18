@@ -12,6 +12,9 @@ public class CreatureGenerator : MonoBehaviour
     public GameObject moustache4Prefab; // Prefab pour les moustaches
     public GameObject hornPrefab; // Prefab pour les cornes 
     public GameObject cubePrefab; // Prefab pour les cube du corps
+
+    public Vector3 min, max;
+
     private Vector3 _initialPosition;
 
     /// <summary>
@@ -21,11 +24,7 @@ public class CreatureGenerator : MonoBehaviour
     /// <returns>Le modèle GameObject généré</returns>
     public GameObject GenerateModel(Creature creature)
     {
-        if  (creature.Type == CreatureType.Forest) {
-            _initialPosition = new Vector3(Random.Range(-200, 200), Random.Range(10, 20), Random.Range(-200, 200));
-        } else {
-            _initialPosition = new Vector3(Random.Range(-400, -800), Random.Range(10, 20), Random.Range(-200, 200));
-        }
+        _initialPosition = new Vector3(Random.Range(min.x, max.x), Random.Range(min.y, max.y), Random.Range(min.z, max.z));
         GameObject creatureModel = new GameObject("CreatureModel");
         creatureModel.transform.position = _initialPosition;
 
