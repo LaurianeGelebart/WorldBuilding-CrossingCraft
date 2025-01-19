@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CreatureMovement : MonoBehaviour
@@ -55,7 +56,16 @@ public class CreatureMovement : MonoBehaviour
     void FindNearestFood()
     {
         // Chercher tous les prefabs dans la sc�ne
-        GameObject[] prefabs = GameObject.FindGameObjectsWithTag("Food");
+        List<GameObject> prefabs = new();
+        prefabs.AddRange(GameObject.FindGameObjectsWithTag("FoodBoth"));
+        if (associatedCreature.Type == CreatureType.Forest)
+        {
+            prefabs.AddRange(GameObject.FindGameObjectsWithTag("FoodForest"));
+        }
+        if (associatedCreature.Type == CreatureType.Desert)
+        {
+            prefabs.AddRange(GameObject.FindGameObjectsWithTag("FoodDesert"));
+        }
         float closestDistance = Mathf.Infinity;
 
         foreach (GameObject prefab in prefabs)

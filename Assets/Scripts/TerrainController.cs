@@ -7,7 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class TestWFC : MonoBehaviour
+public class TerrainController : MonoBehaviour
 {
     public Vector3Int min, max;
     public Vector3 tileSize = new(2, 2, 2);
@@ -18,42 +18,21 @@ public class TestWFC : MonoBehaviour
     public bool manualIterations = false;
 
     public List<GeneralWFCTile> tileset;
-    readonly WaveFunctionCollapse wfc = new();
+    public readonly WaveFunctionCollapse wfc = new();
 
     float timer = 0;
 
     bool halted = false;
     int iteration = 0;
 
+    public bool IsCollapsed => wfc.IsCollapsed();
+
     // Start is called before the first frame update
     void Start()
     {
         List<WFCTile> tiles = new();
-        // List<string> whiteList = new() {
-        //     TileName.ForestGround,
-        //     TileName.ForestGroundWallInnerCorner,
-        //     TileName.ForestGroundWallOuterCorner,
-        //     TileName.ForestCliffSide,
-        //     TileName.ForestCliffCorner,
-        //     TileName.ForestGroundWallSide,
-
-        //     TileName.DesertGround,
-        //     TileName.DesertGroundWallInnerCorner,
-        //     TileName.DesertGroundWallOuterCorner,
-        //     TileName.DesertCliffSide,
-        //     TileName.DesertCliffCorner,
-        //     TileName.DesertGroundWallSide,
-
-        //     TileName.TransitionForestDesertLinear,
-        //     TileName.TransitionForestDesertAngleDesert,
-        //     TileName.TransitionForestDesertAngleForest
-        // };
         foreach (var generalTile in tileset)
         {
-            // if (
-            //     generalTile.prefab != null &&
-            //     !whiteList.Contains(generalTile.prefab.name)
-            // ) continue;
             tiles.AddRange(generalTile.ToWFCTiles());
         }
         wfc.tileset = tiles;
@@ -183,6 +162,23 @@ public class TestWFC : MonoBehaviour
             }
         }
         wfc.updated = false;
+    }
+
+    public Vector3Int WorldToGrid(Vector3 pos)
+    {
+        return new(
+            (int)(pos.x / (tileSize.x * transform.localScale.x)),
+            (int)(pos.y / (tileSize.y * transform.localScale.y)),
+            (int)(pos.z / (tileSize.z * transform.localScale.z))
+        );
+    }
+    public Vector3 GridToWorld(Vector3Int pos)
+    {
+        return new(
+            pos.x * (tileSize.x * transform.localScale.x),
+            pos.y * (tileSize.y * transform.localScale.y),
+            pos.z * (tileSize.z * transform.localScale.z)
+        );
     }
 }
 
