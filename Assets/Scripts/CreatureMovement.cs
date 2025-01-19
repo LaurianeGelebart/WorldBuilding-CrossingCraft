@@ -84,8 +84,14 @@ public class CreatureMovement : MonoBehaviour
     {
         if (currentTarget == null) return;
 
+        Vector3 targetAtEyeLevel = new(
+            currentTarget.transform.position.x,
+            transform.position.y,
+            currentTarget.transform.position.z
+        );
+
         // Calculate direction to the target
-        Vector3 directionToTarget = (currentTarget.transform.position - transform.position).normalized;
+        Vector3 directionToTarget = (targetAtEyeLevel - transform.position).normalized;
 
         // Move towards the target
         transform.position += directionToTarget * moveSpeed * Time.deltaTime;
