@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SoundScene.unity
+    path: Assets/Scenes/Old scenes/SoundScene.unity
     guid: fc52ef798e9decf45ab8ad8d8b7b2002
   m_configObjects: {}
