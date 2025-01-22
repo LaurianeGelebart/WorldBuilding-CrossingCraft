@@ -440,11 +440,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: e050c471582dd9147972ec403a7cd113, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 51392cdf3c0ab2242a67d75bb5884ec8, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -516,7 +516,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1442,6 +1442,198 @@ MonoBehaviour:
     yPosFlipped: 
     yNegFlipped: 
   - prefab: {fileID: 2218033440535656216, guid: 0946a3be969a08a4b9c2de144a19ffc6, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 2218033440535656216, guid: 0982a2f7c7ac815448e17f5d8ee12933, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 2218033440535656216, guid: de5917da28001814a8adf50f8fcefa50, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 2218033440535656216, guid: 00c4141c145dd0442a4cc4cfe8f3d782, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 2218033440535656216, guid: 6f3af1e9eff7e9b4b9b201fbb80533b9, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 2218033440535656216, guid: ad047da6f368b194485bd190c51460fe, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 2218033440535656216, guid: 1d4c1e1d62b50854aa7e5bde6f5b1611, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: d0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 3612486163611764765, guid: bd0fcec063c1606428ea5566d227bb89, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: f0s
+      yPos: -1
+      yNeg: -2
+      zPos: f0s
+      zNeg: f0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 3612486163611764765, guid: e24d210285a8440408801fad58be8473, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: f0s
+      yPos: -1
+      yNeg: -2
+      zPos: f0s
+      zNeg: f0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 3612486163611764765, guid: f929224cd340cad48893e071e38263f1, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: f0s
+      yPos: -1
+      yNeg: -2
+      zPos: f0s
+      zNeg: f0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 3010530899750348413, guid: d27ca7b7e9f550a4e8ef14246fb65857, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: w0s
+      yPos: -1
+      yNeg: -2
+      zPos: tfw0f
+      zNeg: tfw0
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 4785130051121771347, guid: 2289945ee7cd9d64f911912fc67d5fe2, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: tfw0
+      yPos: -1
+      yNeg: -2
+      zPos: tfw0f
+      zNeg: f0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 3010530899750348413, guid: ceb78e7272b990048850b17fbbee6f51, type: 3}
+    sockets:
+      xPos: d0s
+      xNeg: w0s
+      yPos: -1
+      yNeg: -2
+      zPos: tdw0f
+      zNeg: tdw0
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 7650120166338293263, guid: b92b7d9d3c69f5f4599a06c728038763, type: 3}
+    sockets:
+      xPos: t0f
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: d0s
+      zNeg: t0
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 1938146157796552172, guid: 5403e50123a2af24391461b4d9cc25a4, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: t0
+      yPos: -1
+      yNeg: -2
+      zPos: t0f
+      zNeg: f0s
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 7737282429139303222, guid: cafefe58c9ec0794fbbde8156c323d99, type: 3}
+    sockets:
+      xPos: f0s
+      xNeg: d0s
+      yPos: -1
+      yNeg: -2
+      zPos: t0f
+      zNeg: t0
+    rotates: 1
+    flip: 0
+    yPosFlipped: 
+    yNegFlipped: 
+  - prefab: {fileID: 2218033440535656216, guid: 2b28ca01e75585541aabea89ca6828ee, type: 3}
     sockets:
       xPos: d0s
       xNeg: d0s
