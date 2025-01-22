@@ -80,7 +80,8 @@ public class TerrainController : MonoBehaviour
 
         if (wfc.IsCollapsed())
         {
-            stateText.text = "Collapsed in " + timer + " seconds";
+            // stateText.text = "Collapsed in " + timer + " seconds";
+            stateText.text = "";
             halted = true;
             RenderWFC();
         }
