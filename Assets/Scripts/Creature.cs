@@ -35,6 +35,9 @@ public class Creature
     public float ScaleFactor => _scaleFactor;
     public float Speed => _speed;
 
+    public GameObject deathEffectPrefab;
+    private DeathEffectManager deathEffectManager;
+
 
     /// <summary>
     /// Constructeur pour créer une créature avec un génome aléatoire d'une longueur donnée
@@ -105,10 +108,34 @@ public class Creature
     }
 
     /// <summary>
+    /// Lier les particules à la créature
+    /// </summary>
+    public void SetDeathEffect(GameObject effect)
+    {
+        deathEffectPrefab = effect;
+    }
+
+    /// <summary>
     /// Mort de la créature, détruit son model 3D 
     /// </summary>
     public void Die()
     {
+        if (deathEffectPrefab != null)
+        {
+            if (DeathEffectManager.Instance != null)
+            {
+                DeathEffectManager.Instance.PlayDeathEffect(deathEffectPrefab, model.transform.position);
+            }
+            else
+            {
+                Debug.LogError("DeathEffectManager instance is not found!");
+            }
+        }
+        else
+        {
+            Debug.LogError("deathEffectPrefab is not assigned!");
+        }
+
         if (model != null)
         {
             UnityEngine.Object.Destroy(model);

@@ -12,6 +12,7 @@ public class CreatureGenerator : MonoBehaviour
     public GameObject moustache4Prefab; // Prefab pour les moustaches
     public GameObject hornPrefab; // Prefab pour les cornes 
     public GameObject cubePrefab; // Prefab pour les cube du corps
+    public GameObject deathEffectPrefab;
     private Vector3 _initialPosition;
 
     /// <summary>
@@ -34,6 +35,8 @@ public class CreatureGenerator : MonoBehaviour
         // CreateMoustache(headPosition, creatureModel, creature);
         CreateTentacles(creatureModel, creature);
         if (creature.Type == CreatureType.Desert) CreateHorns(headPosition, creatureModel, creature);
+
+        creature.SetDeathEffect(deathEffectPrefab);
 
         return creatureModel;
     }
