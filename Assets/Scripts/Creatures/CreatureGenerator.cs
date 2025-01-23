@@ -30,7 +30,7 @@ public class CreatureGenerator : MonoBehaviour
 
         Vector3 headPosition = CreateBody(creatureModel, creature);
         CreateEyes(headPosition, creatureModel, creature);
-        // CreateMoustache(headPosition, creatureModel, creature);
+        CreateMoustache(headPosition, creatureModel, creature);
         CreateTentacles(creatureModel, creature);
         if (creature.Type == CreatureType.Desert) CreateHorns(headPosition, creatureModel, creature);
 
