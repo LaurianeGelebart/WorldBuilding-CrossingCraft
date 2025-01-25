@@ -1,33 +1,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Contrôle les mouvements et comportements d'une créature dans l'environnement de jeu
+/// </summary>
 public class CreatureMovement : MonoBehaviour
 {
-    private Creature associatedCreature;
-    public float moveSpeed;
-    private GameObject currentTarget;
 
+    private Creature associatedCreature; // Créature associée à ce script de mouvement
+
+    public float moveSpeed; // Vitesse de déplacement de la créature
+
+    private GameObject currentTarget; // Alimentaire cible de la créature
+
+    /// <summary>
+    /// Initialise le script de mouvement avec une créature spécifique
+    /// </summary>
+    /// <param name="creature">La créature à associer au script de mouvement</param>
     public void Initialize(Creature creature)
     {
         associatedCreature = creature;
         moveSpeed = creature.Speed;
     }
 
+    /// <summary>
+    /// Mise à jour frame par frame du comportement de recherche de nourriture
+    /// </summary>
     void Update()
     {
-        // Afficher la barre de faim dans la console
+        // Afficher l'état de la faim de la créature
         DisplayHungerBar();
 
-        // Ne chercher de la nourriture que si la faim n'est pas au maximum
+        // Rechercher de la nourriture si la créature n'est pas complètement rassasiée
         if (associatedCreature.faim < 100f)
         {
-            // Find the nearest food if no current target
+            // Trouver la nourriture la plus proche si aucune cible n'est définie
             if (currentTarget == null)
             {
                 FindNearestFood();
             }
 
-            // Move towards the food if a target exists
+            // Se déplacer vers la nourriture si une cible existe
             if (currentTarget != null)
             {
                 MoveTowardsTarget();
@@ -35,27 +48,30 @@ public class CreatureMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Affiche une représentation visuelle du niveau de faim dans la console
+    /// </summary>
     void DisplayHungerBar()
     {
-        // Calculer le nombre de caract�res pour la barre de faim
+        // Calculer la longueur de la barre de faim
         int hungerBarLength = 20;
         int filledLength = Mathf.RoundToInt((associatedCreature.faim / 100f) * hungerBarLength);
 
-        // Cr�er la barre de faim
+        // Créer la barre de faim
         string hungerBar = "[";
         for (int i = 0; i < hungerBarLength; i++)
         {
             hungerBar += i < filledLength ? "=" : " ";
         }
         hungerBar += "]";
-
-        // Afficher dans la console
-        // Debug.Log($"Creature Hunger: {hungerBar} {associatedCreature.faim:F1}%");
     }
 
+    /// <summary>
+    /// Recherche la nourriture la plus proche adaptée au type de créature
+    /// </summary>
     void FindNearestFood()
     {
-        // Chercher tous les prefabs dans la sc�ne
+        // Collecter les prefabs de nourriture compatibles
         List<GameObject> prefabs = new();
         prefabs.AddRange(GameObject.FindGameObjectsWithTag("FoodBoth"));
         if (associatedCreature.Type == CreatureType.Forest)
@@ -68,6 +84,7 @@ public class CreatureMovement : MonoBehaviour
         }
         float closestDistance = Mathf.Infinity;
 
+        // Trouver la nourriture la plus proche
         foreach (GameObject prefab in prefabs)
         {
             float distance = Vector3.Distance(transform.position, prefab.transform.position);
@@ -80,44 +97,52 @@ public class CreatureMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Déplace la créature vers sa cible alimentaire
+    /// </summary>
     void MoveTowardsTarget()
     {
         if (currentTarget == null) return;
 
+        // Ajuster la hauteur de la cible pour un mouvement horizontal
         Vector3 targetAtEyeLevel = new(
             currentTarget.transform.position.x,
             transform.position.y,
             currentTarget.transform.position.z
         );
 
-        // Calculate direction to the target
+        // Calculer la direction vers la cible
         Vector3 directionToTarget = (targetAtEyeLevel - transform.position).normalized;
 
-        // Move towards the target
+        // Déplacer la créature vers la cible
         transform.position += directionToTarget * moveSpeed * Time.deltaTime;
 
-        // Optional: Rotate to face the direction of movement
+        // Orienter la créature dans la direction du mouvement
         if (directionToTarget != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(directionToTarget);
         }
 
-        // Check if close enough to food to "eat" it
+        // Vérifier si la créature est assez proche pour "manger" la nourriture
         float distanceToTarget = Vector3.Distance(transform.position, currentTarget.transform.position);
         if (distanceToTarget < 0.5f)
         {
-            // Increase creature's hunger
+            // Augmenter la satiété de la créature
             if (associatedCreature != null)
             {
                 associatedCreature.Eat(50f);
             }
 
-            // Destroy the food
+            // Détruire l'objet de nourriture
             Destroy(currentTarget);
             currentTarget = null;
         }
     }
 
+    /// <summary>
+    /// Gère les interactions de la créature avec les objets de nourriture
+    /// </summary>
+    /// <param name="other">Collider de l'objet entrant en collision</param>
     void OnTriggerEnter(Collider other)
     {
         FoodItem foodItem = other.GetComponent<FoodItem>();
@@ -126,17 +151,17 @@ public class CreatureMovement : MonoBehaviour
         {
             if (foodItem.poisonIntensity > 0)
             {
-                // Poisonous food
+                // Gestion de la nourriture empoisonnée
                 associatedCreature.Eat(-foodItem.poisonIntensity);
                 associatedCreature.pv -= foodItem.poisonIntensity / 3f;
             }
             else
             {
-                // Normal food
+                // Gestion de la nourriture normale
                 associatedCreature.Eat(foodItem.nutritionalValue);
             }
 
-            // Destroy the food after consumption
+            // Détruire la nourriture après consommation
             Destroy(other.gameObject);
         }
     }
