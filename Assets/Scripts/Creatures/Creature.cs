@@ -5,27 +5,31 @@ using UnityEngine;
 
 public class Creature
 {
-    public List<int> genome;           // Liste d'entier (0 ou 1) représentant le génome de la créature (suite de bits)
-    public float fitness;              // Fitness de la créature (évaluation de sa qualité)
-    public GameObject model;           // Modèle 3D associé à la créature
-    public Collider creatureCollider;  // Collider de la créature
-    public CreatureGenerator creatureGenerator;  // Référence du générateur de modèles
+    // Génome de la créature : liste de bits définissant ses traits génétiques
+    public List<int> genome;
+    public float fitness;              // Score de fitness évaluant la qualité globale
+    public GameObject model;           // Modèle 3D représentant la créature
+    public Collider creatureCollider;  // Composant de détection de collision
+    public CreatureGenerator creatureGenerator;  // Générateur de modèles
     public SoundController soundController;
-    public int genomeLength = 21;
+    public int genomeLength = 21;      // Nombre total de bits dans le génome
 
-    public float pv;
-    public float faim;
+    // Statistiques vitales du cycle de vie
+    public float pv;                   // Points de vie
+    public float faim;                 // Niveau de faim
 
+    // Attributs privés décodés du génome
     private CreatureType _type;
-    private Color _color;               // Couleur de la créature
+    private Color _color;               // Couleur visuelle 
     private int _tentaclesWidth;        // Longueur des tentacules 
-    private int _numberOfTentacles;     // Nombre de tentacules
-    private float _scaleFactor;         // Facteur de la taille globale de la créature
-    private int _numberOfMoustaches;
-    private int _typeOfMoustache;
-    private int _typeOfHorns;
-    public float _speed;
+    private int _numberOfTentacles;     // Nombre total de tentacules
+    private float _scaleFactor;         // Multiplicateur de taille
+    private int _numberOfMoustaches;    // Nombre de moustaches
+    private int _typeOfMoustache;       // Style de moustache
+    private int _typeOfHorns;           // Configuration potentielle de cornes
+    public float _speed;                // Vitesse de déplacement
 
+    // Accesseurs pour les attributs décodés du génome
     public CreatureType Type => _type;
     public Color Color => _color;
     public int TentaclesWidth => _tentaclesWidth;
@@ -46,11 +50,11 @@ public class Creature
     {
         genome = new List<int>();
 
-        // Premier bit du génome = type 
+        // Premier bit détermine le type (0 pour Forêt, 1 pour Désert)
         int bitType = (type == CreatureType.Forest) ? 0 : 1;
         genome.Add(bitType);
 
-        // Remplissage du génome avec des valeurs aléatoires (0 ou 1)
+        // Remplir les bits restants avec des 0 et 1 aléatoires
         for (int i = 1; i < genomeLength; i++)
         {
             genome.Add(Random.Range(0, 2));
@@ -58,7 +62,6 @@ public class Creature
 
         CreatureCommons(generator, soundController);
     }
-
 
     /// <summary>
     /// Constructeur pour créer une créature à partir d'un génome déjà existant
@@ -72,28 +75,27 @@ public class Creature
         CreatureCommons(generator, soundController);
     }
 
-
-
     /// <summary>
     /// Methodes communes des constructeurs de creatures
     /// </summary>
     /// <param name="generator">Référence au générateur de modèles</param>
-private void CreatureCommons(CreatureGenerator generator, SoundController controller)
+    private void CreatureCommons(CreatureGenerator generator, SoundController controller)
     {
         creatureGenerator = generator;
-        
-        DecodeGenome();
-        EvaluateFitness();
-        model = creatureGenerator.GenerateModel(this);
 
-        // Ajouter un sound controller au model 
+        DecodeGenome();         // Convertir le génome binaire en attributs
+        EvaluateFitness();       // Calculer le potentiel adaptatif
+        model = creatureGenerator.GenerateModel(this);  // Créer la représentation 3D
+
+        // Ajouter des capacités sonores au modèle
         soundController = model.AddComponent<SoundController>();
         soundController.StartCoroutine(InitializeAudioAfterStart(controller));
-        
+
+        // Ajouter des capacités de mouvement
         CreatureMovement movementScript = model.AddComponent<CreatureMovement>();
         movementScript.Initialize(this);
 
-        // Ajouter un Collider et un Rigidbody au model
+        // Configurer les interactions physiques (Collider et Rigidbody)
         AddColliderToModel();
         AddRigidbodyToModel();
     }
@@ -109,8 +111,6 @@ private void CreatureCommons(CreatureGenerator generator, SoundController contro
 
         soundController.PlayBornSound();
     }
-
-
 
     /// <summary>   
     /// Cycle de la vie, descend les pv de la créature en fonction du temps qui passe 
@@ -201,8 +201,8 @@ private void CreatureCommons(CreatureGenerator generator, SoundController contro
         fitness += EvaluateCourbe();
         fitness += EvaluateMoustacheType();
         fitness += EvaluateMoustacheNumber();
-        fitness += EvaluateSpeed();
     }
+
     /// <summary>
     /// Évalue la couleur de la créature 
     /// </summary>

@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Générateur de créatures, génère le model d'une créature à l'aide de prefabs 
+/// </summary>
 public class CreatureGenerator : MonoBehaviour
 {
     public GameObject eyePrefab;    // Prefab pour les yeux 
@@ -12,8 +15,7 @@ public class CreatureGenerator : MonoBehaviour
     public GameObject moustache4Prefab; // Prefab pour les moustaches
     public GameObject hornPrefab; // Prefab pour les cornes 
     public GameObject cubePrefab; // Prefab pour les cube du corps
-
-    public Vector3 min, max;
+    public Vector3 minPosition, maxPosition;   // Position min et max où peut se placer la créature 
 
     private Vector3 _initialPosition;
 
@@ -24,7 +26,7 @@ public class CreatureGenerator : MonoBehaviour
     /// <returns>Le modèle GameObject généré</returns>
     public GameObject GenerateModel(Creature creature)
     {
-        _initialPosition = new Vector3(Random.Range(min.x, max.x), Random.Range(min.y, max.y), Random.Range(min.z, max.z));
+        _initialPosition = new Vector3(Random.Range(minPosition.x, maxPosition.x), Random.Range(minPosition.y, maxPosition.y), Random.Range(minPosition.z, maxPosition.z));
         GameObject creatureModel = new GameObject("CreatureModel");
         creatureModel.transform.position = _initialPosition;
 
@@ -194,8 +196,7 @@ public class CreatureGenerator : MonoBehaviour
 
 
     /// <summary>
-    /// Ajoute des corne à la créature et les place sur la sphère la tête
-    /// Seule les créatures du Désert ont des cornes
+    /// Ajoute des cornes à la créature et les place sur la sphère tête
     /// </summary>
     /// <param name="headPosition">La position de la sphère tête</param>
     /// <param name="creatureModel">Le modèle de la créature</param>
