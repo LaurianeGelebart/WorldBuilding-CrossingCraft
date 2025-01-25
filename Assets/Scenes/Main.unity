@@ -721,8 +721,8 @@ MonoBehaviour:
   moustache4Prefab: {fileID: 5694422080209112526, guid: 4c885aeeb676d904a8a485e55ab63fe3, type: 3}
   hornPrefab: {fileID: 5740257124671799458, guid: 4b772044c3539bd4db4af96ba82a8aa6, type: 3}
   cubePrefab: {fileID: 1311568603942818291, guid: 25e70a8db7cf5e34cbb5cfae806b8ac5, type: 3}
-  min: {x: 0, y: 64, z: 0}
-  max: {x: 640, y: 64, z: 640}
+  minPosition: {x: 0, y: 64, z: 0}
+  maxPosition: {x: 640, y: 64, z: 640}
 --- !u!4 &1152805090
 Transform:
   m_ObjectHideFlags: 0
@@ -772,6 +772,8 @@ MonoBehaviour:
   foodController: {fileID: 215117472}
   terrainController: {fileID: 1298720581}
   beginningCreatureNumber: 30
+  mutationRate: 0.04
+  selectionThreshold: 0.7
 --- !u!4 &1284273942
 Transform:
   m_ObjectHideFlags: 0
